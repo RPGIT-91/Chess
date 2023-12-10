@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUI extends JFrame {
+	
 	private JPanel[][] panels;
 	public Board chessBoard;
 

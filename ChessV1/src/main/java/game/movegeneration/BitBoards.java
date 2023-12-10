@@ -1,6 +1,5 @@
 package game.movegeneration;
 
-import game.board.Board;
 import game.movegeneration.pieces.*;
 
 public class BitBoards extends BitBoardHelper{
@@ -205,25 +204,6 @@ public class BitBoards extends BitBoardHelper{
 		return possibleMoves;
 		// this bitboard needs to be checked against the current moves.
 	}
-
-//	public static long singleCheckKing(boolean isWhite) {
-//		long possibleMoves = 0L;
-//
-//		long enemyAttacks = (!isWhite ? whiteAM : blackAM);
-//		long kingSquare = (isWhite ? whiteKingBB : blackKingBB);
-//
-//		if ((enemyAttacks & kingSquare) != 0) {
-//			long enemyPawns = (!isWhite ? whitePawnsAM:blackPawnsAM);
-//			long enemyKnights = (!isWhite ? whiteKnightsAM:blackKnightsAM);
-//			long enemyBishops = (!isWhite ? whiteBishopsAM:blackBishopsAM);
-//			long enemyRooks = (!isWhite ? whiteRooksAM:blackRooksAM);
-//			long enemyQueens = (!isWhite ? whiteQueensAM:blackQueensAM);
-//			
-//			possibleMoves |= enemyPawns | enemyKnights | enemyBishops | enemyRooks | enemyQueens;
-//		}
-//		return possibleMoves;
-//	}
-
 
 	public static long checkPin(int from, boolean isWhite) {	
 		// Step 1: piece to move is attacked by enemy bishop, rook, queen. 
