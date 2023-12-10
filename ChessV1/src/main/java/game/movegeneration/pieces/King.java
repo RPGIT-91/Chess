@@ -1,0 +1,145 @@
+package game.movegeneration.pieces;
+
+import game.board.board.GameState;
+import game.movegeneration.BitBoards;
+
+public class King implements PieceI {
+	private static int[] kingMoves = {-9, -8, -7, -1, 1, 7, 8, 9};
+
+	public static long kingAttacks;
+	private final int pieceType = 6;
+	private final int pieceColour; // 0 for white, 1 for black
+
+	//Constructor
+	public King(int pieceColour, int pos) {
+		this.pieceColour = pieceColour;
+
+		BitBoards.add(pos, pieceType, pieceColour);
+	}
+
+	@Override
+	public int getPieceType() {
+		return pieceType;
+	}
+
+	@Override
+	public int getPieceColour() {
+		return pieceColour;
+	}
+
+	@Override
+	public long generateMove(int from, boolean isWhite, GameState previousGameState) {
+		long position = 1L << from;
+		long possibleMoves = 0L;
+		long attackMask = 0L;
+
+
+		//move into check
+		attackMask = (!isWhite ? BitBoards.whiteAM : BitBoards.blackAM);
+		
+		for (int move : kingMoves) {
+			// Calculate the new position
+			long newPosition = (position << move) | (position >>> -move);
+
+			int oldRank = Long.numberOfTrailingZeros(position) / 8;
+			int oldFile = Long.numberOfTrailingZeros(position) % 8;
+			int newRank = Long.numberOfTrailingZeros(newPosition) / 8;
+			int newFile = Long.numberOfTrailingZeros(newPosition) % 8;            
+
+			//restrict capturing at edge of board
+			if (Math.abs(newRank - oldRank) <= 1 &  Math.abs(newFile - oldFile) <= 1) {
+				// Create a bit mask for the new square
+				long newSquareMask = 1L << (Long.numberOfTrailingZeros(newPosition));
+
+				if ((newSquareMask & (BitBoards.allBB | attackMask)) == 0 ){
+					//Check if unoccupied and not attacked
+					possibleMoves |= newSquareMask;
+				}
+
+				if ((newSquareMask & attackMask) == 0) {
+					if (isWhite && ((newSquareMask & BitBoards.blackBB) != 0)) {
+						//when white, black can be captured
+						possibleMoves |= newSquareMask;
+
+					} else if (!isWhite && (newSquareMask & BitBoards.whiteBB) != 0){
+						//when black, white can be captured
+						possibleMoves |= newSquareMask;
+					}
+				}
+				//same condition check but as one line
+				//if (((newSquareMask & (allPieces | attackMask)) == 0) || ((newSquareMask & attackMask) == 0 && ((isWhite && (newSquareMask & allBlack) != 0) || (!isWhite && (newSquareMask & allWhite) != 0)))) {
+				//    possibleMoves |= newSquareMask;
+				//}
+			}
+		}
+		//# Castling
+		long kingPiece = (isWhite ? BitBoards.whiteKingBB : BitBoards.blackKingBB);
+		long castleBoard = previousGameState.getCastleBoard(isWhite);
+		//check for Castle privilege, have the pieces moved?
+		if(castleBoard != 0) {
+			long freeSquare = 0L;
+			long moveSquare = 0L;
+
+			//King Side Castle
+			//add restrictions if in between squares are occupied or attacked
+			moveSquare = (kingPiece << 1) | (kingPiece << 2);
+			freeSquare = moveSquare;
+			
+			//if blocked or attacked remove
+			if((freeSquare & BitBoards.allBB) != 0 || ((moveSquare & attackMask) != 0)) {
+				castleBoard &= ~((1L << 6) | (1L <<  62));
+			}
+
+			//Queen Side Castle
+			moveSquare = (kingPiece >> 1) | (kingPiece >> 2);
+			freeSquare = moveSquare | (kingPiece >> 3);
+
+			if((freeSquare & BitBoards.allBB) != 0 || ((moveSquare & attackMask) != 0)) {
+				castleBoard &= ~((1L << 2) | (1L <<  58));
+			}
+			possibleMoves |= castleBoard;
+		}
+		return possibleMoves;
+	}
+
+
+
+	public static long generateSamePieceAttacks(boolean isWhite) {
+		long possibleMoves = 0L;
+		long newSquareMask = 0L;
+		long from = (isWhite ? BitBoards.whiteKingBB : BitBoards.blackKingBB);
+
+		for (int move : kingMoves) {
+			// Calculate the new position
+			long newPosition = (from << move) | (from >>> -move);
+
+			int oldRank = Long.numberOfTrailingZeros(from) / 8;
+			int oldFile = Long.numberOfTrailingZeros(from) % 8;
+			int newRank = Long.numberOfTrailingZeros(newPosition) / 8;
+			int newFile = Long.numberOfTrailingZeros(newPosition) % 8;  
+
+			//restrict capturing at edge of board
+			if (Math.abs(newRank - oldRank) <= 1 &  Math.abs(newFile - oldFile) <= 1) {
+				// Create a bit mask for the new square
+				newSquareMask = 1L << (Long.numberOfTrailingZeros(newPosition));
+			}
+			possibleMoves |= newSquareMask;
+		}
+
+		return possibleMoves;
+	}
+
+
+	public void toggleBB(int square, boolean isWhite){
+		BitBoards.kingsBB ^= 1L << square;
+
+		if (isWhite) {
+			BitBoards.whiteBB ^= 1L << square;
+		} else {
+			BitBoards.blackBB ^= 1L << square;
+		}
+	}
+
+}
+
+
