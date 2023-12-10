@@ -5,7 +5,6 @@ import java.util.Stack;
 
 import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.*;
-import game.movegeneration.*;
 
 
 public class Board {
@@ -248,29 +247,7 @@ public class Board {
 		//							1 -> 1 -> 0		
 		//white		0 -> 1			0 -> 1 -> 1			0 -> 1 -> 1
 		//black		0 -> 0			1 -> 1 -> 0			1 -> 1 -> 0
-		//BitBoards.printMask(BitBoards.allBB);
 	}
-	
-//	public void queening() {
-//		if (to / 8 == (pieceToMove.isWhite() ? 7 : 0)) {
-//		    // Check if the pawn reached the 8th (white) or 1st (black) rank
-//		    // Prompt the user to choose a piece for queening
-//		    int chosenPieceType = // Get user input or determine the piece type in some way
-//
-//		    // Validate the chosen piece type (e.g., ensure it's a valid piece type)
-//		    if (isValidPieceType(chosenPieceType)) {
-//		        // Promote the pawn to the chosen piece type
-//		        square[toBB] = PieceI.makePiece(chosenPieceType, pieceToMove.isWhite());
-//
-//		        // Update the bitboard for the chosen piece
-//		        PieceI promotedPiece = square[toBB];
-//		        promotedPiece.toggleBB(to, promotedPiece.isWhite());
-//		    } else {
-//		        // Handle invalid piece type
-//		        System.out.println("Invalid piece type for queening.");
-//		    }
-//		}
-//	}
 
 	public long showValidMoves(int from) {
 		int fromBB = toBBSquare(from);
@@ -362,12 +339,13 @@ public class Board {
 		return bbPos;
 	}
 
-	public void saveGameState(GameState currentGameState) {
+	private void saveGameState(GameState currentGameState) {
 		// Save the current game state by pushing it onto the stack
 		gameStateStack.push(currentGameState);
 	}
 
-	public GameState restorePreviousState() {
+	//for eval.
+	private GameState restorePreviousState() {
 		// Restore the previous game state by popping from the stack
 		if (!gameStateStack.isEmpty()) {
 			return gameStateStack.pop();
@@ -503,8 +481,8 @@ public class Board {
 //		printBitBoard(BitBoards.whiteBishopsBB, enableIndex);
 //		System.out.println("W - ROOK");
 //		printBitBoard(BitBoards.whiteRooksBB, enableIndex);
-				System.out.println("W - QUEEN");
-				printBitBoard(BitBoards.whiteQueensBB, enableIndex);
+		System.out.println("W - QUEEN");
+		printBitBoard(BitBoards.whiteQueensBB, enableIndex);
 //		System.out.println("W - KING");
 //		printBitBoard(BitBoards.whiteKingBB, enableIndex);
 
