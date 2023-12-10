@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.*;
+import game.movegeneration.*;
 
 
 public class Board {
@@ -97,20 +98,20 @@ public class Board {
 					square[fromBB] = null; // Remove the piece from the original square
 					square[toBB] = pieceToMove; // Place the piece in the new square
 
-					//update BB
-
-					//Remove piece from current square
+					//update BB of Piece.
 					pieceToMove.toggleBB(from, pieceToMove.isWhite());				
 					pieceToMove.toggleBB(to, pieceToMove.isWhite());
+
+					
 					if (pieceToRemove != null) {
 						//when piece is of same type need to turn piece board on again
 						if (pieceToMove.getPieceType() == pieceToRemove.getPieceType()) {
 							//toggle only piece value.
-							pieceToRemove.toggleBB(to, !pieceToMove.isWhite());
+							pieceToRemove.toggleBB(to, pieceToRemove.isWhite());
 
 							//else toggle target square piece as well as colour board
 						} else {
-							pieceToRemove.toggleBB(to, !pieceToRemove.isWhite());
+							pieceToRemove.toggleBB(to, pieceToRemove.isWhite());
 						}
 					}	
 					// Special treatment of Pawn double moves and en Passant.
@@ -130,6 +131,21 @@ public class Board {
 							pieceToRemove.toggleBB(to - shift, pieceToRemove.isWhite());
 							square[toBB + shift] = null;
 						}
+						//Queening
+						if (to / 8 == (pieceToMove.isWhite() ? 7 : 0)) {
+				            // Check if the pawn reached the 8th (white) or 1st (black) rank
+				            // Promote the pawn to a queen
+							System.out.println("queening");
+							
+							square[toBB] = null;				
+
+				            // Update the bitboard for the queen
+				            pieceToMove.toggleBB(to, pieceToMove.isWhite());
+				            
+				            //BitBoard interferes with adding --> set temporarily to 0;
+							BitBoards.allBB = ~1L << to;
+				            addPiece(to, 5, pieceToMove.getPieceColour()); // Queen's piece type is 5				           			          				          
+				        }
 					} else {
 						newEnPassantFile = 0;
 					}
@@ -193,13 +209,13 @@ public class Board {
 					}
 					if (pieceToMove.getPieceType() == 4) { //Rook moves
 						if (from == 0) {
-							wQueenSide = false;
-						} else if (from == 7) {
 							wKingSide = false;
+						} else if (from == 7) {
+							wQueenSide = false;
 						} else if (from == 56) {
-							bQueenSide = false;
-						} else if (from == 63) {
 							bKingSide = false;
+						} else if (from == 63) {
+							bQueenSide = false;							
 						}
 					}
 					
@@ -234,6 +250,27 @@ public class Board {
 		//black		0 -> 0			1 -> 1 -> 0			1 -> 1 -> 0
 		//BitBoards.printMask(BitBoards.allBB);
 	}
+	
+//	public void queening() {
+//		if (to / 8 == (pieceToMove.isWhite() ? 7 : 0)) {
+//		    // Check if the pawn reached the 8th (white) or 1st (black) rank
+//		    // Prompt the user to choose a piece for queening
+//		    int chosenPieceType = // Get user input or determine the piece type in some way
+//
+//		    // Validate the chosen piece type (e.g., ensure it's a valid piece type)
+//		    if (isValidPieceType(chosenPieceType)) {
+//		        // Promote the pawn to the chosen piece type
+//		        square[toBB] = PieceI.makePiece(chosenPieceType, pieceToMove.isWhite());
+//
+//		        // Update the bitboard for the chosen piece
+//		        PieceI promotedPiece = square[toBB];
+//		        promotedPiece.toggleBB(to, promotedPiece.isWhite());
+//		    } else {
+//		        // Handle invalid piece type
+//		        System.out.println("Invalid piece type for queening.");
+//		    }
+//		}
+//	}
 
 	public long showValidMoves(int from) {
 		int fromBB = toBBSquare(from);
@@ -466,16 +503,16 @@ public class Board {
 //		printBitBoard(BitBoards.whiteBishopsBB, enableIndex);
 //		System.out.println("W - ROOK");
 //		printBitBoard(BitBoards.whiteRooksBB, enableIndex);
-		//		System.out.println("W - QUEEN");
-		//		printBitBoard(BitBoards.whiteQueensBB, enableIndex);
+				System.out.println("W - QUEEN");
+				printBitBoard(BitBoards.whiteQueensBB, enableIndex);
 //		System.out.println("W - KING");
 //		printBitBoard(BitBoards.whiteKingBB, enableIndex);
 
 		System.out.println("-------------------------------");
 
 		System.out.println();
-		System.out.println("B - PAWN");
-		printBitBoard(BitBoards.blackPawnsBB, enableIndex);
+//		System.out.println("B - PAWN");
+//		printBitBoard(BitBoards.blackPawnsBB, enableIndex);
 //		System.out.println("B - KNIGHT");
 //		printBitBoard(BitBoards.blackKnightsBB, enableIndex);
 //		System.out.println("B - BISHOP");
