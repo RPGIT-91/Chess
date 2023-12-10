@@ -2,11 +2,10 @@ package gui;
 
 import javax.swing.*;
 
-import game.board.board.Board;
+import game.board.Board;
 import game.movegeneration.pieces.PieceI;
 
 import javax.swing.*;
-import game.board.board.Board;
 import game.movegeneration.pieces.PieceI;
 
 import java.awt.*;

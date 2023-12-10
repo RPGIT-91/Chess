@@ -2,7 +2,7 @@ package game.movegeneration.pieces;
 
 import java.util.List;
 
-import game.board.board.GameState;
+import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class Knight implements PieceI {

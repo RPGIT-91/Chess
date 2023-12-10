@@ -1,7 +1,7 @@
 package start;
 import javax.swing.SwingUtilities;
 
-import game.board.board.*;
+import game.board.*;
 import gui.GUI;
 
 // # Introduction

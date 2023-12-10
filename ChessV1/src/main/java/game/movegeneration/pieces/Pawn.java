@@ -1,7 +1,7 @@
 package game.movegeneration.pieces;
 
 import game.movegeneration.*;
-import game.board.board.GameState;
+import game.board.GameState;
 
 public class Pawn implements PieceI {
 	public static long pawnAttacks;

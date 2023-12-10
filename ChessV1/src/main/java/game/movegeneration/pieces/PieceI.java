@@ -3,7 +3,7 @@ package game.movegeneration.pieces;
 import java.util.ArrayList;
 import java.util.List;
 
-import game.board.board.GameState;
+import game.board.GameState;
 
 public interface PieceI {	
 	public static final long fileA = 0x101010101010101L;

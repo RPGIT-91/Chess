@@ -1,4 +1,4 @@
-package game.board.board;
+package game.board;
 
 import java.util.Arrays;
 import java.util.Stack;

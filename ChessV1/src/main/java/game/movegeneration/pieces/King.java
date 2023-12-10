@@ -1,6 +1,6 @@
 package game.movegeneration.pieces;
 
-import game.board.board.GameState;
+import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class King implements PieceI {

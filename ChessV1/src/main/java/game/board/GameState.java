@@ -1,4 +1,4 @@
-package game.board.board;
+package game.board;
 
 // Class to save the current GameState
 // who's turn, en Pssant, Castling, fifty move counter.
