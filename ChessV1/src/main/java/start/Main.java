@@ -31,27 +31,27 @@ import gui.GUI;
 public class Main{	
 	public static void main(String[] args) {
 		Board board = new Board();
-		
-		board.movePiece(11, 27);
-		board.movePiece(51, 35);
-		
-		board.movePiece(2, 29);
-		board.movePiece(58, 37);
-		
-		board.movePiece(3, 19);
-		board.movePiece(59, 43);
-		
-		board.movePiece(1, 18);
-		board.movePiece(57, 42);
-		
-		board.movePiece(12, 28);
-		board.movePiece(52, 36);
-		
-		board.movePiece(6, 21);
-		board.movePiece(62, 45);
-		
-		board.movePiece(5, 12);
-		board.movePiece(61, 52);
+//		
+//		board.movePiece(11, 27);
+//		board.movePiece(51, 35);
+//		
+//		board.movePiece(2, 29);
+//		board.movePiece(58, 37);
+//		
+//		board.movePiece(3, 19);
+//		board.movePiece(59, 43);
+//		
+//		board.movePiece(1, 18);
+//		board.movePiece(57, 42);
+//		
+//		board.movePiece(12, 28);
+//		board.movePiece(52, 36);
+//		
+//		board.movePiece(6, 21);
+//		board.movePiece(62, 45);
+//		
+//		board.movePiece(5, 12);
+//		board.movePiece(61, 52);
 
 		
 		// Game Start
