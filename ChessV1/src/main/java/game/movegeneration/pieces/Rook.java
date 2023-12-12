@@ -2,6 +2,7 @@ package game.movegeneration.pieces;
 
 import java.util.List;
 
+import game.board.Board;
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 
@@ -68,7 +69,7 @@ public class Rook implements PieceI {
 			possibleMoves &= BitBoards.checkPin(from, isWhite);
 			
 			//Remove options when king in check
-			long checkedMask = BitBoards.singleCheck(isWhite);
+			long checkedMask = BitBoards.singleCheck(from, isWhite);
 			if (checkedMask != 0) {
 				possibleMoves &= checkedMask;
 			}

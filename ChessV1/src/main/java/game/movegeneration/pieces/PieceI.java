@@ -21,23 +21,23 @@ public interface PieceI {
 
 	int getPieceType(); // Return a unique identifier for each piece type
 	int getPieceColour(); // Return the color of the piece (e.g., 0 for white, 1 for black)
-	
+
 	long generateMove(int from, boolean isWhite, GameState previousGameState); //generate Pseudolegal Moves.
-	
+
 	//BB to see which squares are defended, and attacked. - Attack Mask
 	//implemented in every Class as to calc
 	//public static long generateSamePieceAttacks(boolean isWhite);
-	
+
 	void toggleBB(int from, boolean isWhite); //basically remove or add.
-	
-	
+
+
 	default boolean isWhite() {	
 		return getPieceColour() == 0; 
 	}
-	
+
 	default boolean isValidMove(int from, int to, GameState previousGameState) {
 		long mask = 1L << to;
-		
+
 		if ((mask & generateMove(from, getPieceColour() == 0, previousGameState)) != 0) {
 			return true;
 		} else {
@@ -58,7 +58,7 @@ public interface PieceI {
 
 		return individualBitboards;
 	}
-	
+
 	//Debugging
 	default void printMask(long bits) {
 		for (int rank = 7; rank >= 0; rank--) {
@@ -75,6 +75,37 @@ public interface PieceI {
 			System.out.println();
 		}
 		System.out.println();
+	}
+
+	//Add to Square centric Board and to bitboards.
+	static PieceI addPiece(int pos, int pieceType, int pieceColour) {
+
+		PieceI newPiece;
+
+		// Create a new chess piece based on the provided values
+		switch (pieceType) {
+		case 1:
+			newPiece = new Pawn(pieceColour, pos);
+			break;
+		case 2:
+			newPiece = new Knight(pieceColour, pos);
+			break;
+		case 3:
+			newPiece = new Bishop(pieceColour, pos);
+			break;
+		case 4:
+			newPiece = new Rook(pieceColour, pos);
+			break;
+		case 5:
+			newPiece = new Queen(pieceColour, pos);
+			break;
+		case 6:
+			newPiece = new King(pieceColour, pos);
+			break;
+		default:
+			newPiece = new Pawn(pieceColour, pos);
+		}
+		return newPiece;
 	}
 
 }

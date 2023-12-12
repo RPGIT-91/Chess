@@ -54,6 +54,17 @@ package game.movegeneration;
 			return bitboard >>> -numSquaresToShift;
 		}
 	}
+	
+	public static int countSetBits(long bitboard) {
+        int count = 0;
+
+        while (bitboard != 0) {
+            count += bitboard & 1;
+            bitboard >>>= 1;
+        }
+
+        return count;
+    }
 
 }
 

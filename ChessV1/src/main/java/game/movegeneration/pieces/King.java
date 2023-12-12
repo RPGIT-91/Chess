@@ -72,6 +72,12 @@ public class King implements PieceI {
 				//}
 			}
 		}
+		
+		//Remove moving into check on other side.
+		if ((position & attackMask) != 0) {
+			possibleMoves &= BitBoards.checkKingInCheckMove(from, isWhite);
+		}
+		
 		//# Castling
 		long kingPiece = (isWhite ? BitBoards.whiteKingBB : BitBoards.blackKingBB);
 		long castleBoard = previousGameState.getCastleBoard(isWhite);

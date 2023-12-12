@@ -52,7 +52,7 @@ public class Knight implements PieceI {
 			//remove moves that are not within the knights boundaries
 			possibleMoves = possibleMoves & generate5x5SquareMask(position);
 			//Remove options when king in check
-			long checkedMask = BitBoards.singleCheck(isWhite);
+			long checkedMask = BitBoards.singleCheck(from, isWhite);
 			if (checkedMask != 0) {
 				possibleMoves &= checkedMask;
 			}

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Stack;
 
 import game.movegeneration.BitBoards;
-import game.movegeneration.pieces.*;
+import game.movegeneration.pieces.PieceI;
 
 
 public class Board {
@@ -39,37 +39,10 @@ public class Board {
 	//Add to Square centric Board and to bitboards.
 	public void addPiece(int pos, int pieceType, int pieceColour) {
 		int posBB = toBBSquare(pos);
-		PieceI newPiece;
-
-		// Create a new chess piece based on the provided values
-		switch (pieceType) {
-		case 1:
-			newPiece = new Pawn(pieceColour, pos);
-			break;
-		case 2:
-			newPiece = new Knight(pieceColour, pos);
-			break;
-		case 3:
-			newPiece = new Bishop(pieceColour, pos);
-			break;
-		case 4:
-			newPiece = new Rook(pieceColour, pos);
-			break;
-		case 5:
-			newPiece = new Queen(pieceColour, pos);
-			break;
-		case 6:
-			newPiece = new King(pieceColour, pos);
-			break;
-		default:
-			// Handle unknown piece types
-			System.out.println("Unknown piece type: " + pieceType);
-			return;
-		}
-
-		// Add the new piece to the specified square
+		PieceI newPiece = PieceI.addPiece(pos, pieceType, pieceColour);
 		square[posBB] = newPiece;
 	}
+
 
 	public void movePiece(int from, int to) {
 		int fromBB = toBBSquare(from);
@@ -82,7 +55,7 @@ public class Board {
 		isWhiteToMove = previousGameState.getIsWhiteToMove(); //Swtich move order.
 		plyCounter = previousGameState.getPlyCounter();
 		moveCounter = previousGameState.getMoveCounter();
-		
+
 		if (pieceToMove != null) {
 			if (pieceToMove.isWhite() == isWhiteToMove) {
 				if (pieceToMove.isValidMove(from, to, previousGameState)) {
@@ -101,7 +74,7 @@ public class Board {
 					pieceToMove.toggleBB(from, pieceToMove.isWhite());				
 					pieceToMove.toggleBB(to, pieceToMove.isWhite());
 
-					
+
 					if (pieceToRemove != null) {
 						//when piece is of same type need to turn piece board on again
 						if (pieceToMove.getPieceType() == pieceToRemove.getPieceType()) {
@@ -132,19 +105,19 @@ public class Board {
 						}
 						//Queening
 						if (to / 8 == (pieceToMove.isWhite() ? 7 : 0)) {
-				            // Check if the pawn reached the 8th (white) or 1st (black) rank
-				            // Promote the pawn to a queen
+							// Check if the pawn reached the 8th (white) or 1st (black) rank
+							// Promote the pawn to a queen
 							System.out.println("queening");
-							
+
 							square[toBB] = null;				
 
-				            // Update the bitboard for the queen
-				            pieceToMove.toggleBB(to, pieceToMove.isWhite());
-				            
-				            //BitBoard interferes with adding --> set temporarily to 0;
+							// Update the bitboard for the queen
+							pieceToMove.toggleBB(to, pieceToMove.isWhite());
+
+							//BitBoard interferes with adding --> set temporarily to 0;
 							BitBoards.allBB = ~1L << to;
-				            addPiece(to, 5, pieceToMove.getPieceColour()); // Queen's piece type is 5				           			          				          
-				        }
+							addPiece(to, 5, pieceToMove.getPieceColour()); // Queen's piece type is 5				           			          				          
+						}
 					} else {
 						newEnPassantFile = 0;
 					}
@@ -155,37 +128,37 @@ public class Board {
 						if (to == 6) {
 							//King Side White
 							PieceI rookPiece = square[toBBSquare(7)];
-							
+
 							rookPiece.toggleBB(7, rookPiece.isWhite());
 							rookPiece.toggleBB(5, rookPiece.isWhite());
-							
+
 							square[toBBSquare(7)] = null;
 							addPiece(5, 4, 0);
 						} else if (to == 2){
 							//Queen Side White
 							PieceI rookPiece = square[toBBSquare(0)];
-							
+
 							rookPiece.toggleBB(0, rookPiece.isWhite());
 							rookPiece.toggleBB(3, rookPiece.isWhite());
-							
+
 							square[toBBSquare(0)] = null;
 							addPiece(3, 4, 0);
 						} else if (to == 62) {
 							//King Side Black							
 							PieceI rookPiece = square[toBBSquare(63)];
-							
+
 							rookPiece.toggleBB(63, rookPiece.isWhite());
 							rookPiece.toggleBB(61, rookPiece.isWhite());
-							
+
 							square[toBBSquare(63)] = null;
 							addPiece(61, 4, 1);
 						} else if (to == 58) {
 							//Queen Side Black
 							PieceI rookPiece = square[toBBSquare(56)];
-							
+
 							rookPiece.toggleBB(56, rookPiece.isWhite());
 							rookPiece.toggleBB(59, rookPiece.isWhite());
-							
+
 							square[toBBSquare(56)] = null;
 							addPiece(59, 4, 1);
 						}
@@ -195,7 +168,21 @@ public class Board {
 					int removedPiece = 0;
 					if (pieceToRemove != null) {
 						removedPiece = pieceToRemove.getPieceType();
+						
+						//remove castling if rook captured on starting position
+						if (pieceToRemove.getPieceType() == 4) {
+							if (to == 0) {
+								wKingSide = false;
+							} else if (to == 7) {
+								wQueenSide = false;
+							} else if (to == 56) {
+								bKingSide = false;
+							} else if (to == 63) {
+								bQueenSide = false;							
+							}
+						}
 					}
+					
 					// remove castle right
 					if (pieceToMove.getPieceType() == 6) { //King moves
 						if (pieceToMove.getPieceColour() == 0) {
@@ -218,8 +205,10 @@ public class Board {
 						}
 					}
 					
-					plyCounter = plyCounter + 1;
 					
+
+					plyCounter = plyCounter + 1;
+
 					GameState currentGameState = new GameState(removedPiece, newEnPassantFile, plyCounter, wKingSide, wQueenSide, bKingSide, bQueenSide);								
 					currentGameState.setOppToMove(isWhiteToMove);				
 					saveGameState(currentGameState);
@@ -263,7 +252,7 @@ public class Board {
 		//      loadPosition(FenUtility.START_POSITION_FEN);
 		gameStateStack.peek().resetGameState();
 		gameStateStack.peek().setEnPassantFile(-1);
-		
+
 		//clear Board for new game
 		Arrays.fill(square, null);
 		BitBoards.allBB = 0L;
@@ -475,33 +464,33 @@ public class Board {
 
 		System.out.println("W - PAWN");
 		printBitBoard(BitBoards.whitePawnsBB, enableIndex);
-//		System.out.println("W - KNIGHT");
-//		printBitBoard(BitBoards.whiteKnightsBB, enableIndex);
-//		System.out.println("W - BISHOP");
-//		printBitBoard(BitBoards.whiteBishopsBB, enableIndex);
-//		System.out.println("W - ROOK");
-//		printBitBoard(BitBoards.whiteRooksBB, enableIndex);
+		//		System.out.println("W - KNIGHT");
+		//		printBitBoard(BitBoards.whiteKnightsBB, enableIndex);
+		//		System.out.println("W - BISHOP");
+		//		printBitBoard(BitBoards.whiteBishopsBB, enableIndex);
+		//		System.out.println("W - ROOK");
+		//		printBitBoard(BitBoards.whiteRooksBB, enableIndex);
 		System.out.println("W - QUEEN");
 		printBitBoard(BitBoards.whiteQueensBB, enableIndex);
-//		System.out.println("W - KING");
-//		printBitBoard(BitBoards.whiteKingBB, enableIndex);
+		//		System.out.println("W - KING");
+		//		printBitBoard(BitBoards.whiteKingBB, enableIndex);
 
 		System.out.println("-------------------------------");
 
 		System.out.println();
-//		System.out.println("B - PAWN");
-//		printBitBoard(BitBoards.blackPawnsBB, enableIndex);
-//		System.out.println("B - KNIGHT");
-//		printBitBoard(BitBoards.blackKnightsBB, enableIndex);
-//		System.out.println("B - BISHOP");
-//		printBitBoard(BitBoards.blackBishopsBB, enableIndex);
-//		System.out.println("B - ROOK");
-//		printBitBoard(BitBoards.blackRooksBB, enableIndex);
+		//		System.out.println("B - PAWN");
+		//		printBitBoard(BitBoards.blackPawnsBB, enableIndex);
+		//		System.out.println("B - KNIGHT");
+		//		printBitBoard(BitBoards.blackKnightsBB, enableIndex);
+		//		System.out.println("B - BISHOP");
+		//		printBitBoard(BitBoards.blackBishopsBB, enableIndex);
+		//		System.out.println("B - ROOK");
+		//		printBitBoard(BitBoards.blackRooksBB, enableIndex);
 		//		System.out.println("B - QUEEN");
 		//		printBitBoard(BitBoards.blackQueensBB, enableIndex);
-//		System.out.println("B - KING");
-//		printBitBoard(BitBoards.blackKingBB, enableIndex);
-		
+		//		System.out.println("B - KING");
+		//		printBitBoard(BitBoards.blackKingBB, enableIndex);
+
 		System.out.println("----------- end ---------------");
 		System.out.println();
 		System.out.println();

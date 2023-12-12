@@ -78,27 +78,35 @@ public class Pawn implements PieceI {
 			//long vertical = (0x0101010101010101L << (-1 % 8) & ~(1L << -1));
 			vertical &= (rank3 | rank6);
 			if((vertical & caps) != 0) {
-				long noSameColourCap = (isWhite ? ((BitBoards.whiteBB << 8) | (BitBoards.whiteBB >> 8)): ((BitBoards.blackBB <<8) | (BitBoards.blackBB >>8)));
-				long pawn = (isWhite ? BitBoards.whiteBB: BitBoards.blackBB);
-				//exclude white caps to rank 3 and black to 6
-				if ((pawn & rank3 >> 8) != 0) {
-					possibleMoves |= (vertical & caps & ~noSameColourCap);
-				} else if ((pawn & rank6 << 8) != 0) {
-					possibleMoves |= (vertical & caps & ~noSameColourCap);
+				
+				//Remove en passant capture when that would result in a check
+				if (!BitBoards.checkEnPassantPin(from, isWhite)) {
+					long noSameColourCap = (isWhite ? ((BitBoards.whiteBB << 8) | (BitBoards.whiteBB >> 8)): ((BitBoards.blackBB <<8) | (BitBoards.blackBB >>8)));
+					long pawn = (isWhite ? BitBoards.whiteBB: BitBoards.blackBB);
+					//exclude white caps to rank 3 and black to 6 when EP
+					if ((pawn & rank3 >> 8) != 0) {
+						possibleMoves |= (vertical & caps & ~noSameColourCap);
+					} else if ((pawn & rank6 << 8) != 0) {
+						possibleMoves |= (vertical & caps & ~noSameColourCap);
+					}
 				}
 			}
 			//Remove options when king in check
-			long checkedMask = BitBoards.singleCheck(isWhite);
+			long checkedMask = BitBoards.singleCheck(from, isWhite);
 			if (checkedMask != 0) {
 				possibleMoves &= checkedMask;
 			}
 			//Remove options when pinned
 			possibleMoves &= BitBoards.checkPin(from, isWhite);
+			
+			
 		}
 
 		return possibleMoves;
 
 	}
+	
+	
 
 
 	public static long generateSamePieceAttacks(boolean isWhite) {
