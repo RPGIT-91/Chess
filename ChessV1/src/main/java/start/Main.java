@@ -2,6 +2,7 @@ package start;
 import javax.swing.SwingUtilities;
 
 import game.board.*;
+import game.search.Searcher;
 import gui.GUI;
 
 // # Introduction
@@ -34,10 +35,20 @@ import gui.GUI;
 public class Main{	
 	public static void main(String[] args) {
 		Board board = new Board();
-		board.loadStartPosition();
-		//board.movePiece(12, 28);
 		
-		board.LoadPositionFromFEN("rnb2bnr/pp1p1kpp/5p2/q3pP1K/2p5/8/PPPPP1PP/RNBQ1BNR w  e6 0 7", true);
+		Searcher.makeAllMoves(board);
+//		board.movePiece(12, 28);
+//		board.movePiece(55, 39);
+//		board.movePiece(4, 12);
+//		board.loadPreviousBoard();
+//		board.loadPreviousBoard();
+		
+		
+		
+//		for (String i : board.fenStack){
+//			System.out.println(i);
+//		}
+		//board.LoadPositionFromFEN("rnb2bnr/pp1p1kpp/5p2/q3pP1K/2p5/6P1/PPPPP2P/RNBQ1BNR b  - 0 7", true);
 		
 
 		

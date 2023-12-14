@@ -79,7 +79,6 @@ public class King implements PieceI {
 		if ((position & attackMask) != 0) {
 			possibleMoves &= BitBoards.checkKingInCheckMove(from, isWhite);
 		}
-		printMask(possibleMoves);
 		
 		//# Castling
 		long kingPiece = (isWhite ? BitBoards.whiteKingBB : BitBoards.blackKingBB);

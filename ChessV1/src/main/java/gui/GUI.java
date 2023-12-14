@@ -4,15 +4,14 @@ import javax.swing.*;
 
 import game.board.Board;
 import game.movegeneration.pieces.PieceI;
-
-import javax.swing.*;
-import game.movegeneration.pieces.PieceI;
+import game.search.Searcher;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUI extends JFrame {
+	private static final long serialVersionUID = 1L;
 	
 	private JPanel[][] panels;
 	public Board chessBoard;
@@ -81,7 +80,14 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Code to execute when Button 2 is clicked
-                JOptionPane.showMessageDialog(GUI.this, "Please enter a FEN String for a Game");
+            	Searcher.makeAllMoves(chessBoard);
+//            	 SwingUtilities.invokeLater(() -> {
+//                     // Assuming chessBoard is a Swing component, trigger a repaint
+//                     chessBoard.repaint();
+//
+//                     // Add any other GUI update code here if needed
+//                 });
+                //JOptionPane.showMessageDialog(GUI.this, "Please enter a FEN String for a Game");
             }
         });
 

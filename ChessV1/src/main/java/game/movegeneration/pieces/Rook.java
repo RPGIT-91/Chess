@@ -2,7 +2,6 @@ package game.movegeneration.pieces;
 
 import java.util.List;
 
-import game.board.Board;
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 

@@ -6,8 +6,8 @@ package game.board;
 
 public class GameState {
 	//not implemented yet.
-	private int repetitionWhite;
-	private int repetitionBlack;
+//	private int repetitionWhite;
+//	private int repetitionBlack;
 	private int fiftyMoveCounter;
 
 	private boolean isWhiteToMove;
@@ -31,8 +31,8 @@ public class GameState {
 		this.bKingSideCastle = bKingSideCastle;
 		this.bQueenSideCastle = bQueenSideCastle;
 		
-		this.repetitionBlack = 0;
-		this.repetitionWhite = 0;
+//		this.repetitionBlack = 0;
+//		this.repetitionWhite = 0;
 	}
 	
 	//set a bitboard of possible Castle Squares based on colour and game state
@@ -110,6 +110,10 @@ public class GameState {
 
 	public void setbQueenSideCastle(boolean isPoss) {
 		this.bQueenSideCastle = isPoss;
+	}
+	
+	public void setPlyCounter(int plyCounter) {
+		this.plyCounter = plyCounter;
 	}
 	
 	public int getPlyCounter() {

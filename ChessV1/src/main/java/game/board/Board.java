@@ -243,13 +243,7 @@ public class Board {
 		//white		0 -> 1			0 -> 1 -> 1			0 -> 1 -> 1
 		//black		0 -> 0			1 -> 1 -> 0			1 -> 1 -> 0
 	}
-
 	
-	public void loadPreviousBoard(){
-		restorePreviousState();
-		
-	}
-
 	public long showValidMoves(int from) {
 		int fromBB = toBBSquare(from);
 		long validMoves = 0L;
@@ -258,10 +252,25 @@ public class Board {
 		}
 		return validMoves;
 	}
+	
+	public void loadFENBoard(String fen) {
+		//No check for if valid fen.
+		LoadPositionFromFEN(fen, true, true);
+	}
+	
+	public void loadPreviousBoard(){
+		//pop GameState from stack
+		restorePreviousState();
+		
+		//pop fen from stack and load 
+		fenStack.pop();
+		LoadPositionFromFEN(fenStack.peek(), false, false);
+		
+	}
 
 	// Load the starting position
 	public void loadStartPosition() {
-		LoadPositionFromFEN(FEN.START_POSITION_FEN, true);		
+		LoadPositionFromFEN(FEN.START_POSITION_FEN, true, true);		
 	}
 
 	// # Helper
@@ -495,9 +504,10 @@ public class Board {
 		System.out.println();
 	}
 	
-	public void LoadPositionFromFEN(String fen, boolean newGame) {
+	private void LoadPositionFromFEN(String fen, boolean newGame, boolean pushToStack) {
 		if (newGame) {
 			gameStateStack.clear();
+			fenStack.clear();
 			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
 			saveGameState(initialGameState);
 		}
@@ -553,44 +563,61 @@ public class Board {
 				}
 			}
 		}
-		gameStateStack.peek().setWhiteToMove(sections[1].equals("w"));
+		try {
+			gameStateStack.peek().setWhiteToMove(sections[1].equals("w"));
 
-		String castlingRights = sections[2];
-		gameStateStack.peek().setwKingSideCastle(castlingRights.contains("K"));
-		gameStateStack.peek().setwQueenSideCastle(castlingRights.contains("Q"));
-		gameStateStack.peek().setbKingSideCastle(castlingRights.contains("k"));
-		gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
+			String castlingRights = sections[2];
+			gameStateStack.peek().setwKingSideCastle(castlingRights.contains("K"));
+			gameStateStack.peek().setwQueenSideCastle(castlingRights.contains("Q"));
+			gameStateStack.peek().setbKingSideCastle(castlingRights.contains("k"));
+			gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
 
-		// Default values
-		int epFile = -1;
-		int fiftyMoveCounter = 0;
-		int moveCounter = 0;
+			// Default values
+			int epFile = -1;
+			int fiftyMoveCounter = 0;
+			int moveCounter = 0;
 
-		if (sections.length > 3) {
-			String enPassantFileName = String.valueOf(sections[3].charAt(0));
-			if (FEN.fileNames.contains(enPassantFileName)) {
-				epFile = FEN.fileNames.indexOf(enPassantFileName);			
+			if (sections.length > 3) {
+				String enPassantFileName = String.valueOf(sections[3].charAt(0));
+				if (FEN.fileNames.contains(enPassantFileName)) {
+					epFile = FEN.fileNames.indexOf(enPassantFileName);			
+				}
 			}
-		}
 
-		// Half-move clock
-		if (sections.length > 4) {
-			fiftyMoveCounter = Integer.parseInt(sections[4]);
-		}
-		// Full move number
-		if (sections.length > 5) {
-			moveCounter = Integer.parseInt(sections[5]);
+			// Half-move clock
+			if (sections.length > 4) {
+				fiftyMoveCounter = Integer.parseInt(sections[4]);
+			}
+			// Full move number
+			if (sections.length > 5) {
+				moveCounter = Integer.parseInt(sections[5]);
+			}
+			
+			// plyCounter if black to move +1
+			int inc = 0;
+			if (!gameStateStack.peek().getIsWhiteToMove()) {
+				inc = 1;
+			}
+			gameStateStack.peek().setPlyCounter((moveCounter * 2) - 2 + inc);
+			
+			gameStateStack.peek().setEnPassantFile(epFile);
+			gameStateStack.peek().setFiftyMoveCounter(fiftyMoveCounter);
+			gameStateStack.peek().setMoveCounter(moveCounter);
+			
+			if (pushToStack) {
+				pushToFENStack(fen);
+			}
+			
+		} catch (ArrayIndexOutOfBoundsException e){
+            System.err.println("Error: Array index out of bounds. " + e.getMessage());
 		}
 		
-		gameStateStack.peek().setEnPassantFile(epFile);
-		gameStateStack.peek().setFiftyMoveCounter(fiftyMoveCounter);
-		gameStateStack.peek().setMoveCounter(moveCounter);
 		
-		pushToFENStack(fen);
 	}
 	
 	public void pushToFENStack(String fen) {
 		fenStack.push(fen);
 		System.out.println(fen);
 	}
+	
 }
