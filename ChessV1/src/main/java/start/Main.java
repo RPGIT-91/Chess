@@ -35,7 +35,16 @@ public class Main{
 	public static void main(String[] args) {
 		Board board = new Board();
 		
-//		board.movePiece(12, 28);
+		board.movePiece(12, 28);
+		
+		board.loadStartPosition();
+		
+		//board.LoadPositionFromFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e6 0 1");
+		
+
+		
+		//System.out.println(FEN.currentFen(board));
+		//Board.printAllBB(true);
 //		board.movePiece(55, 39);
 //		board.movePiece(4, 12);
 //		board.movePiece(39, 31);
@@ -68,9 +77,8 @@ public class Main{
                 new GUI(board);
             }
 		});
-
 		//debugging 
-		Board.printAllBB(true);
+		//Board.printAllBB(true);
 		//Board.printBitBoard(BitBoards.allBB, true);
 		//Board.printBitBoard(square[1].generateSamePieceAttacks(isWhiteToMove));
 	}

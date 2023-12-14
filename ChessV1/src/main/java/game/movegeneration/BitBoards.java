@@ -1,6 +1,5 @@
 package game.movegeneration;
 
-import game.board.Board;
 import game.movegeneration.pieces.*;
 
 public class BitBoards extends BitBoardHelper{
@@ -320,8 +319,6 @@ public class BitBoards extends BitBoardHelper{
 			long diagonalPos = generatePositiveDiagonal(from) & ~(1L << from);
 			long diagonalNeg = generateNegativeDiagonal(from) & ~(1L << from);
 
-
-
 			// Step 3
 			if ((kingSquare & horizontal) != 0) {
 				possibleRay = horizontal;
@@ -335,27 +332,21 @@ public class BitBoards extends BitBoardHelper{
 				possibleRay = diagonalNeg;
 			}
 
-
 			// Step 4
 			if ((possibleRay & sliderSquare) == 0) {
 				possibleRay = ~0L;
 			}
 
-
 			//Step 5
-			long inBetween = bitsBetween(kingSquare, movingPawn);
-			System.out.println("Testing EP CAP");
+			long inBetween = bitsBetween(kingSquare, movingPawn);			
 			inBetween &= ~(kingSquare | movingPawn);
-			inBetween &= possibleRay;
-			Board.printBitBoard(inBetween, false);
+			inBetween &= possibleRay;	
 
-
-			blocked &= possibleRay;
-			Board.printBitBoard(inBetween & blocked, false);
+			blocked &= possibleRay;			
 			//BitBoardHelper.countSetBits();
 			// If there is more than a single piece between moving piece and king en passant is still possible
 			if ((inBetween & blocked) != 0) {
-				if (BitBoardHelper.countSetBits(inBetween & blocked) <= 1) {
+				if (BitBoardHelper.countSetBits(inBetween & blocked) == 0) {
 					possible = false;
 				}
 			}

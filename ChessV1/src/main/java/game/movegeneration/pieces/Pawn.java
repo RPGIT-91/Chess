@@ -76,11 +76,13 @@ public class Pawn implements PieceI {
 			long rank6 = (0xFFL << (5 * 8));
 			long vertical = (0x0101010101010101L << (previousGameState.getEnPassantFile() % 8) & ~(1L << previousGameState.getEnPassantFile()));
 			//long vertical = (0x0101010101010101L << (-1 % 8) & ~(1L << -1));
+			
+			printMask(vertical);
 			vertical &= (rank3 | rank6);
 			if((vertical & caps) != 0) {
 				
 				//Remove en passant capture when that would result in a check
-				if (!BitBoards.checkEnPassantPin(from, isWhite)) {
+				if (BitBoards.checkEnPassantPin(from, isWhite)) {
 					long noSameColourCap = (isWhite ? ((BitBoards.whiteBB << 8) | (BitBoards.whiteBB >> 8)): ((BitBoards.blackBB <<8) | (BitBoards.blackBB >>8)));
 					long pawn = (isWhite ? BitBoards.whiteBB: BitBoards.blackBB);
 					//exclude white caps to rank 3 and black to 6 when EP

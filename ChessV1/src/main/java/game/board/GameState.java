@@ -8,6 +8,7 @@ public class GameState {
 	//not implemented yet.
 	private int repetitionWhite;
 	private int repetitionBlack;
+	private int fiftyMoveCounter;
 
 	private boolean isWhiteToMove;
 	private int capturedPieceType;
@@ -137,5 +138,17 @@ public class GameState {
 	
 	public int getMoveCounter() {
 		return moveCounter;
+	}
+	
+	public void setMoveCounter(int moveCounter) {
+		this.moveCounter = moveCounter;
+	}
+	
+	public int getFiftyMoveCounter() {
+		return fiftyMoveCounter;
+	}
+	
+	public void setFiftyMoveCounter(int fiftyMoveCounter) {
+		this.fiftyMoveCounter = fiftyMoveCounter;
 	}
 }

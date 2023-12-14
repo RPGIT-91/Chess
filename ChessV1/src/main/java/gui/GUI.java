@@ -22,46 +22,83 @@ public class GUI extends JFrame {
 		initializeUI();
 	}
 	public void initializeUI() {
-		int rows = 8;
-		int cols = 8;
+        int rows = 8;
+        int cols = 8;
 
-		panels = new JPanel[rows][cols]; // Use JPanel instead of JButton
+        panels = new JPanel[rows][cols];
 
-		setTitle("Chess GUI");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new GridLayout(rows, cols));
+        setTitle("Chess GUI");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				panels[row][col] = new JPanel(); // Use JPanel instead of JButton
-				panels[row][col].setLayout(new BorderLayout());
-				panels[row][col].setPreferredSize(new Dimension(80, 80)); // Set the preferred size
+        // Create a panel for the chessboard
+        JPanel chessboardPanel = new JPanel(new GridLayout(rows, cols));
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                panels[row][col] = new JPanel();
+                panels[row][col].setLayout(new BorderLayout());
+                panels[row][col].setPreferredSize(new Dimension(80, 80));
 
-				// Set background color based on row and column
-				if (((row + col) % 2) != 0) {
-					panels[row][col].setBackground(Color.decode("#e9d5c4"));
-				} else {
-					panels[row][col].setBackground(Color.decode("#d2ad8e"));
-				}
+                if (((row + col) % 2) != 0) {
+                    panels[row][col].setBackground(Color.decode("#e9d5c4"));
+                } else {
+                    panels[row][col].setBackground(Color.decode("#d2ad8e"));
+                }
 
-				final int currentRow = row;
-				final int currentCol = col;
+                final int currentRow = row;
+                final int currentCol = col;
 
-				panels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
-					public void mousePressed(java.awt.event.MouseEvent evt) {
-						handlePanelClick(currentRow, currentCol, evt);
-					}
-				});
+                panels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mousePressed(java.awt.event.MouseEvent evt) {
+                        handlePanelClick(currentRow, currentCol, evt);
+                    }
+                });
 
-				add(panels[row][col]);
-			}
-		}
+                chessboardPanel.add(panels[row][col]);
+            }
+        }
 
-		updateBoard();
-		pack();
-		setLocationRelativeTo(null);
-		setVisible(true);
-	}
+        // Create a panel for additional components
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+
+        // Add your buttons and displays to sidePanel
+        // For example:
+        JButton button1 = new JButton("Save Game");
+        JButton button2 = new JButton("Load Game");
+        JLabel label1 = new JLabel("Depth:");
+        JLabel label2 = new JLabel("Positions Evaluated:");
+        
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Code to execute when Button 1 is clicked                
+                chessBoard.saveGame();
+            }
+        });
+
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Code to execute when Button 2 is clicked
+                JOptionPane.showMessageDialog(GUI.this, "Please enter a FEN String for a Game");
+            }
+        });
+
+        sidePanel.add(button1);
+        sidePanel.add(button2);
+        sidePanel.add(label1);
+        sidePanel.add(label2);
+
+        // Add chessboardPanel to the center and sidePanel to the east
+        add(chessboardPanel, BorderLayout.CENTER);
+        add(sidePanel, BorderLayout.EAST);
+
+        updateBoard();
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
 
 
 	private int selectedRow = -1;
