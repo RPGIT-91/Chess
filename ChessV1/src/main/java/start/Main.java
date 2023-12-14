@@ -34,12 +34,10 @@ import gui.GUI;
 public class Main{	
 	public static void main(String[] args) {
 		Board board = new Board();
-		
-		board.movePiece(12, 28);
-		
 		board.loadStartPosition();
+		//board.movePiece(12, 28);
 		
-		//board.LoadPositionFromFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e6 0 1");
+		board.LoadPositionFromFEN("rnb2bnr/pp1p1kpp/5p2/q3pP1K/2p5/8/PPPPP1PP/RNBQ1BNR w  e6 0 7", true);
 		
 
 		

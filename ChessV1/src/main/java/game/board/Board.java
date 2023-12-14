@@ -27,8 +27,6 @@ public class Board {
 		//Game State related
 		gameStateStack = new Stack<>();
 		fenStack = new Stack<>();
-		GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
-		saveGameState(initialGameState);
 
 		//Board load up
 		square = new PieceI[64];
@@ -246,6 +244,11 @@ public class Board {
 		//black		0 -> 0			1 -> 1 -> 0			1 -> 1 -> 0
 	}
 
+	
+	public void loadPreviousBoard(){
+		restorePreviousState();
+		
+	}
 
 	public long showValidMoves(int from) {
 		int fromBB = toBBSquare(from);
@@ -258,7 +261,7 @@ public class Board {
 
 	// Load the starting position
 	public void loadStartPosition() {
-		LoadPositionFromFEN(FEN.START_POSITION_FEN);		
+		LoadPositionFromFEN(FEN.START_POSITION_FEN, true);		
 	}
 
 	// # Helper
@@ -492,11 +495,14 @@ public class Board {
 		System.out.println();
 	}
 	
-	public void LoadPositionFromFEN(String fen) {
-		gameStateStack.peek().resetGameState();
-		gameStateStack.peek().setEnPassantFile(-1);
+	public void LoadPositionFromFEN(String fen, boolean newGame) {
+		if (newGame) {
+			gameStateStack.clear();
+			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
+			saveGameState(initialGameState);
+		}
 
-		//clear Board for new game
+		//clear BitBoards.
 		Arrays.fill(square, null);
 		BitBoards.allBB = 0L;
 		BitBoards.clear(1);
@@ -556,7 +562,7 @@ public class Board {
 		gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
 
 		// Default values
-		int epFile = 0;
+		int epFile = -1;
 		int fiftyMoveCounter = 0;
 		int moveCounter = 0;
 
@@ -587,11 +593,4 @@ public class Board {
 		fenStack.push(fen);
 		System.out.println(fen);
 	}
-	//    public void loadPosition(String fen) {
-	//        FenUtility.PositionInfo posInfo = FenUtility.positionFromFen(fen);
-	//        loadPosition(posInfo);
-	//    }
-
-
-
 }

@@ -1,5 +1,6 @@
 package game.movegeneration;
 
+import game.board.Board;
 import game.movegeneration.pieces.*;
 
 public class BitBoards extends BitBoardHelper{
@@ -290,7 +291,7 @@ public class BitBoards extends BitBoardHelper{
 
 
 	//method for pawns only
-	public static boolean checkEnPassantPin(int from, boolean isWhite) {	
+	public static boolean checkEnPassantPin(int from, boolean isWhite, int epFile) {	
 		// Step 1: piece to move or EnPassant capture square is attacked by enemy rook, bishop, queen. 
 		// Step 2: Find out which direction
 		// Step 3: check if array is onto king square.
@@ -338,17 +339,21 @@ public class BitBoards extends BitBoardHelper{
 			}
 
 			//Step 5
-			long inBetween = bitsBetween(kingSquare, movingPawn);			
-			inBetween &= ~(kingSquare | movingPawn);
-			inBetween &= possibleRay;	
+			long verticalEP = (0x0101010101010101L << (epFile));
+			long inBetween = bitsBetween(kingSquare, movingPawn >> 1);		
+			inBetween &= ~(kingSquare | movingPawn | verticalEP);
+			inBetween &= possibleRay;
+			
+			
 
-			blocked &= possibleRay;			
-			//BitBoardHelper.countSetBits();
+			
+			blocked &= possibleRay;
+			
 			// If there is more than a single piece between moving piece and king en passant is still possible
-			if ((inBetween & blocked) != 0) {
-				if (BitBoardHelper.countSetBits(inBetween & blocked) == 0) {
+			if ((inBetween & blocked) == 0) {
+				
 					possible = false;
-				}
+				
 			}
 		}
 
@@ -359,9 +364,9 @@ public class BitBoards extends BitBoardHelper{
 	public static long checkKingInCheckMove(int from, boolean isWhite) {
 		// Step 1: remove King move into ray of check
 
-		long possibleMoves = 1L;
+		long possibleMoves = ~0L;
 
-		//		if king attacked by slider, can't move into the sliders ray unless blocked.
+		// if king attacked by slider, can't move into the sliders ray unless blocked.
 		//		
 		long enemyBishops = (!isWhite ? whiteBishopsAM:blackBishopsAM);
 		long enemyRooks = (!isWhite ? whiteRooksAM:blackRooksAM);
@@ -380,38 +385,42 @@ public class BitBoards extends BitBoardHelper{
 		if ((kingSquare & enemyBishops) != 0) {
 			long enemyPiece = (!isWhite ? whiteBishopsBB:blackBishopsBB);
 			if ((enemyPiece & diagonalPos) != 0) {
-				possibleMoves |= ~diagonalPos;
+				possibleMoves &= ~diagonalPos;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & diagonalNeg) != 0) {
-				possibleMoves |= ~diagonalNeg;
+				possibleMoves &= ~diagonalNeg;
 				possibleMoves |= enemyPiece;
 			}
 		}
 		if ((kingSquare & enemyRooks) != 0) {
 			long enemyPiece = (!isWhite ? whiteRooksBB:blackRooksBB);
 			if ((enemyPiece & horizontal) != 0) {
-				possibleMoves |= ~horizontal;
+				possibleMoves &= ~horizontal;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & vertical) != 0) {	
-				possibleMoves |= ~vertical;
+				possibleMoves &= ~vertical;
 				possibleMoves |= enemyPiece;
 			}
 		}
 		if ((kingSquare & enemyQueens) != 0) {
+			System.out.println("CP1");
 			long enemyPiece = (!isWhite ? whiteQueensBB:blackQueensBB);
 			if ((enemyPiece & diagonalPos) != 0) {
-				possibleMoves |= ~diagonalPos;
+				possibleMoves &= ~diagonalPos;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & diagonalNeg) != 0) {		
-				possibleMoves |= ~diagonalNeg;
+				possibleMoves &= ~diagonalNeg;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & horizontal) != 0) {
-				possibleMoves |= ~horizontal;
+				System.out.println("CP2");
+				Board.printBitBoard(horizontal, false);
+				possibleMoves &= ~horizontal;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & vertical) != 0) {
-				possibleMoves |= ~vertical;
+				possibleMoves &= ~vertical;
 				possibleMoves |= enemyPiece;
 			}
+			Board.printBitBoard(possibleMoves, false);
 
 		}
 		return possibleMoves;
