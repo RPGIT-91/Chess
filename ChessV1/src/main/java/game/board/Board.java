@@ -18,7 +18,6 @@ public class Board {
 	// # Side to move info
 	public Stack<GameState> gameStateStack;
 	public Stack<String> fenStack;
-	public boolean isWhiteToMove;
 	public int moveCounter;
 	public int plyCounter;
 
@@ -53,7 +52,7 @@ public class Board {
 		PieceI pieceToRemove = square[toBB];
 
 		GameState previousGameState = gameStateStack.peek();
-		isWhiteToMove = previousGameState.getIsWhiteToMove(); //Swtich move order.
+		boolean isWhiteToMove = previousGameState.getIsWhiteToMove(); //Swtich move order.
 		plyCounter = previousGameState.getPlyCounter();
 		moveCounter = previousGameState.getMoveCounter();
 
@@ -94,8 +93,6 @@ public class Board {
 						if (Math.abs((from / 8) - (to / 8)) == 2) {
 							//save 
 							newEnPassantFile = (fromBB % 8);
-							
-							System.out.println(newEnPassantFile);
 						}				
 						// if indeed an en Passant took place remove target piece from square as well as bitboards.
 						if (pieceToRemove == null && (fromBB % 8 != toBB % 8)) {
@@ -110,7 +107,7 @@ public class Board {
 						if (to / 8 == (pieceToMove.isWhite() ? 7 : 0)) {
 							// Check if the pawn reached the 8th (white) or 1st (black) rank
 							// Promote the pawn to a queen
-							System.out.println("queening");
+							//System.out.println("queening");
 
 							square[toBB] = null;				
 
@@ -122,7 +119,7 @@ public class Board {
 							addPiece(to, 5, pieceToMove.getPieceColour()); // Queen's piece type is 5				           			          				          
 						}
 					} else {
-						newEnPassantFile = 0;
+						newEnPassantFile = -1;
 					}
 
 					//Also handle castle Moves on the board.
@@ -217,7 +214,7 @@ public class Board {
 					saveGameState(currentGameState);
 
 					BitBoards.updateAll();
-					System.out.println("Move " + moveCounter + " successful   " + from + " - " + to);
+					//System.out.println("Move " + moveCounter + " successful   " + from + " - " + to);
 					
 					pushToFENStack(FEN.currentFen(square, currentGameState));
 					
@@ -235,7 +232,7 @@ public class Board {
 		} else {
 			System.out.println("No piece on square:" + from);
 		}
-		printBoard(square);
+		//printBoard(square);
 
 		//target	PtM (empty)		different piece		same piece		
 		//piece		0 -> 1			0 -> 1 -> 1			1 -> 0 -> 1
@@ -617,7 +614,13 @@ public class Board {
 	
 	public void pushToFENStack(String fen) {
 		fenStack.push(fen);
-		System.out.println(fen);
+		//System.out.println(fen);
 	}
 	
+	public static String translateBBToSquare(int bb) {
+		int file = bb % 8;
+		int rank = bb / 8;
+
+		return FEN.fileNames.charAt(file) + "" + (rank + 1);
+	}
 }

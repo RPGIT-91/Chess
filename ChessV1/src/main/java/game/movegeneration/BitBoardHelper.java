@@ -1,5 +1,7 @@
 package game.movegeneration;
 
+import java.util.ArrayList;
+
 // Methods for interacting
  public class BitBoardHelper {
 	public static final long fileA = 0x101010101010101L;
@@ -64,6 +66,17 @@ package game.movegeneration;
         }
 
         return count;
+    }
+	
+	public static ArrayList<Integer> getAllPos(long bitboard) {
+        ArrayList<Integer> posList = new ArrayList<>();
+
+        while (bitboard != 0) {
+            int i = Long.numberOfTrailingZeros(bitboard);
+            bitboard &= (bitboard - 1);
+            posList.add(i);         
+            }
+        return posList;
     }
 
 }

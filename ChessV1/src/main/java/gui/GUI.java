@@ -4,7 +4,9 @@ import javax.swing.*;
 
 import game.board.Board;
 import game.movegeneration.pieces.PieceI;
+import game.search.Move;
 import game.search.Searcher;
+import game.search.Searcher2;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,8 +14,11 @@ import java.awt.event.ActionListener;
 
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private String[] pieceStrings = {"♟", "♞", "♝", "♜", "♛", "♚"};
+	public int depth = 3;
 	
 	private JPanel[][] panels;
+	private JPanel sidePanel;
 	public Board chessBoard;
 
 	public GUI(Board chessBoard) {
@@ -58,15 +63,27 @@ public class GUI extends JFrame {
         }
 
         // Create a panel for additional components
-        JPanel sidePanel = new JPanel();
+        sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 
+        
+        //Searcher.calcBestMove(chessBoard, depth);
+        
+        
         // Add your buttons and displays to sidePanel
         // For example:
+        
+        
         JButton button1 = new JButton("Save Game");
         JButton button2 = new JButton("Load Game");
-        JLabel label1 = new JLabel("Depth:");
-        JLabel label2 = new JLabel("Positions Evaluated:");
+        
+        JLabel label1 = new JLabel("Moves calculated: ");
+        JLabel label2 = new JLabel("Current Eval: ");
+        JLabel label3 = new JLabel("Current BestMove: ");
+        
+        label1.setFont(new Font("Serif", Font.PLAIN, 12));
+        label2.setFont(new Font("Serif", Font.PLAIN, 12));
+        label3.setFont(new Font("Serif", Font.PLAIN, 12));
         
         button1.addActionListener(new ActionListener() {
             @Override
@@ -78,16 +95,8 @@ public class GUI extends JFrame {
 
         button2.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // Code to execute when Button 2 is clicked
-            	Searcher.makeAllMoves(chessBoard);
-//            	 SwingUtilities.invokeLater(() -> {
-//                     // Assuming chessBoard is a Swing component, trigger a repaint
-//                     chessBoard.repaint();
-//
-//                     // Add any other GUI update code here if needed
-//                 });
-                //JOptionPane.showMessageDialog(GUI.this, "Please enter a FEN String for a Game");
+            public void actionPerformed(ActionEvent e) {            	            	         
+            	updateBoard();            	
             }
         });
 
@@ -95,6 +104,7 @@ public class GUI extends JFrame {
         sidePanel.add(button2);
         sidePanel.add(label1);
         sidePanel.add(label2);
+        sidePanel.add(label3);
 
         // Add chessboardPanel to the center and sidePanel to the east
         add(chessboardPanel, BorderLayout.CENTER);
@@ -128,7 +138,7 @@ public class GUI extends JFrame {
 //	        chessBoard.printBitBoard((1L << (inverseRowAndCol(row) * 8 + col)), false);
 	        if ((validMovesBitboard & (1L << toBBSquare(row, col))) != 0) {
 	            // Second click on a valid move - move the piece
-	            chessBoard.movePiece(toBBSquare(selectedRow, selectedCol), toBBSquare(row, col));
+	            chessBoard.movePiece(toBBSquare(selectedRow, selectedCol), toBBSquare(row, col));	      
 	            resetSelection();
 	            updateBoard();
 	            selectingMode = true;
@@ -174,7 +184,7 @@ public class GUI extends JFrame {
 		selectedCol = -1;
 	}
 
-	private void updateBoard() {
+	public void updateBoard() {
 		PieceI[] boardArray = chessBoard.square;
 
 		int rows = 8;
@@ -184,16 +194,56 @@ public class GUI extends JFrame {
 			for (int col = 0; col < cols; col++) {
 				int index = row * cols + col;
 				PieceI piece = boardArray[index];
-				String pieceSymbol = (piece != null) ? Integer.toString(piece.getPieceType()) : " "; // Adjust based on
-				// your PieceI
-				// class
-
-				panels[row][col].removeAll(); // Clear the panel
+				
+				String pieceSymbol = (piece != null) ? pieceStrings[piece.getPieceType() -1] : " ";
+				int stringColour = (piece != null) ? piece.getPieceColour() : 2;
 				JLabel label = new JLabel(pieceSymbol, SwingConstants.CENTER);
+				
+				if (stringColour != 2) {
+					if (stringColour == 0) {
+						label.setForeground(Color.WHITE);
+					} else {
+						label.setForeground(Color.BLACK);
+					}	
+					label.setFont(new Font("Serif", Font.PLAIN, 50));
+					label.setHorizontalAlignment(SwingConstants.CENTER);
+				}
+				panels[row][col].removeAll(); // Clear the panel
+				
 				panels[row][col].add(label, BorderLayout.CENTER); // Add label to center
 				panels[row][col].revalidate(); // Revalidate the panel
+				
+				
 			}
 		}
+		updateSidePanel();
+		
+	}
+	
+	private void updateSidePanel() {
+		Component[] components = sidePanel.getComponents();
+		Searcher2 searcher = new Searcher2();
+		searcher.calcBestMove(chessBoard, depth);
+		
+		if (components[2] instanceof JLabel) {
+			JLabel label = (JLabel) components[2];
+			label.setText("Moves calculated: " + searcher.movesCalculated);
+		}
+		
+		if (components[3] instanceof JLabel) {
+			JLabel label = (JLabel) components[3];
+			label.setText("Current Eval: " + searcher.bestEvalSoFar);			
+		}
+		if (components[4] instanceof JLabel) {
+			JLabel label = (JLabel) components[4];
+			label.setText("Current BestMove: " + Board.translateBBToSquare(searcher.bestMoveSoFar.getFrom()) + " " + Board.translateBBToSquare(searcher.bestMoveSoFar.getTo()));
+		}
+		
+        // Repaint the sidePanel to reflect changes
+        sidePanel.revalidate();
+        sidePanel.repaint();
+        
+        chessBoard.printBoard(chessBoard.square);
 	}
 
 	private Color getSquareColor(int rank, int file) {

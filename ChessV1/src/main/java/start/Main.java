@@ -11,10 +11,9 @@ import gui.GUI;
 
 // Only valid chess moves are possible. 
 // In addition to the normal piece moves that includes: 
-// en Passant, not moving out of pins and castling, Checks, double Check, promotion to Queen.
+// en Passant, en Passant when that when double pinned, not moving out of pins and castling, Checks, double Check, promotion to Queen.
 // Not yet variable pawn promotion.
 
-// en Passant when that would result in a check.
 
 
 // The pieces are initialized and displayed on the board. In a sense it functions like a traditional controller.
@@ -35,49 +34,13 @@ import gui.GUI;
 public class Main{	
 	public static void main(String[] args) {
 		Board board = new Board();
+		//board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ");
 		
-		Searcher.makeAllMoves(board);
-//		board.movePiece(12, 28);
-//		board.movePiece(55, 39);
-//		board.movePiece(4, 12);
-//		board.loadPreviousBoard();
-//		board.loadPreviousBoard();
-		
-		
-		
-//		for (String i : board.fenStack){
-//			System.out.println(i);
-//		}
-		//board.LoadPositionFromFEN("rnb2bnr/pp1p1kpp/5p2/q3pP1K/2p5/6P1/PPPPP2P/RNBQ1BNR b  - 0 7", true);
-		
+		//board.loadFENBoard("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1 ");
 
-		
-		//System.out.println(FEN.currentFen(board));
-		//Board.printAllBB(true);
-//		board.movePiece(55, 39);
-//		board.movePiece(4, 12);
-//		board.movePiece(39, 31);
-//		board.movePiece(12, 20);
-//		board.movePiece(63, 39);
-//		board.movePiece(28, 36);
-//		board.movePiece(39, 38);
-//		board.movePiece(20, 28);
-//		board.movePiece(38, 39);
-//		board.movePiece(28, 35);
-		
-		
-//		board.movePiece(48, 32);
-//		board.movePiece(4, 12);
-//		board.movePiece(32, 24);
-//		board.movePiece(12, 20);
-//		board.movePiece(24, 16);
-//		board.movePiece(20, 29);
-//		board.movePiece(56, 24);
-//		board.movePiece(9, 17);
-//		board.movePiece(50, 34);
-//		board.movePiece(2, 9);
-//		board.movePiece(34, 26);
-//		board.movePiece(28, 36);
+		//board.loadFENBoard("7k/8/8/8/8/8/8/7K w - - 0 1");
+		//board.loadFENBoard("rkb5/pp6/8/1P6/8/8/8/K4B2 b - - 0 1");
+		//board.loadFENBoard("knb5/p2p4/1p6/pP1P4/PpBp4/1PpP4/B1P5/KB6 b - - 0 1");
 		
 		// Game Start
 		SwingUtilities.invokeLater(new Runnable() {

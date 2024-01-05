@@ -1,6 +1,7 @@
 package game.movegeneration.pieces;
 
 import game.movegeneration.*;
+import game.board.Board;
 import game.board.GameState;
 
 public class Pawn implements PieceI {
@@ -80,26 +81,25 @@ public class Pawn implements PieceI {
 			
 			vertical &= (rank3 | rank6);
 			if((vertical & caps) != 0) {
-				
 				//Remove en passant capture when that would result in a check
-				if (BitBoards.checkEnPassantPin(from, isWhite, previousGameState.getEnPassantFile())) {
-					long noSameColourCap = (isWhite ? ((BitBoards.whiteBB << 8) | (BitBoards.whiteBB >> 8)): ((BitBoards.blackBB <<8) | (BitBoards.blackBB >>8)));
-					long pawn = (isWhite ? BitBoards.whiteBB: BitBoards.blackBB);
-					//exclude white caps to rank 3 and black to 6 when EP
-					if ((pawn & rank3 >> 8) != 0) {
-						possibleMoves |= (vertical & caps & ~noSameColourCap);
-					} else if ((pawn & rank6 << 8) != 0) {
-						possibleMoves |= (vertical & caps & ~noSameColourCap);
+				if (BitBoards.checkEnPassantPin(from, isWhite, previousGameState.getEnPassantFile())) {					
+					long pawn = (isWhite ? BitBoards.whitePawnsBB: BitBoards.blackPawnsBB);
+					//exclude white caps to rank 3 and black to 6 when EP					
+					if ((bitboard & pawn & rank6 >> 8) != 0) {
+						possibleMoves |= (vertical & caps & ~rank3);
+					} else if ((bitboard & pawn & rank3 << 8) != 0) {
+						possibleMoves |= (vertical & caps & ~rank6);
 					}
 				}
 			}
 			//Remove options when king in check
-			long checkedMask = BitBoards.singleCheck(from, isWhite);
+			long checkedMask = BitBoards.singleCheck(isWhite);
 			if (checkedMask != 0) {
 				possibleMoves &= checkedMask;
 			}
 			//Remove options when pinned
-			possibleMoves &= BitBoards.checkPin(from, isWhite);
+			possibleMoves &= BitBoards.checkOrthogonalPin(from, isWhite);
+			possibleMoves &= BitBoards.checkDiagonalPin(from, isWhite);
 			
 			
 		}

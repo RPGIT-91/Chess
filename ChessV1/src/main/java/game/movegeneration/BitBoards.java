@@ -139,7 +139,7 @@ public class BitBoards extends BitBoardHelper{
 		return (checks < 1);
 	}
 
-	public static long singleCheck(int from, boolean isWhite) {
+	public static long singleCheck(boolean isWhite) {
 		// Step 1: find out if king attacked
 		// Step 2: find out by which piece
 		// Step 3: pawn and knight --> capture checking piece
@@ -230,7 +230,7 @@ public class BitBoards extends BitBoardHelper{
 		// this bitboard needs to be checked against the current moves.
 	}
 
-	public static long checkPin(int from, boolean isWhite) {	
+	public static long checkOrthogonalPin(int from, boolean isWhite) {	
 		// Step 1: piece to move is attacked by enemy bishop, rook, queen. 
 		// Step 2: Find out which direction
 		// Step 3: check if array is onto king square.
@@ -240,8 +240,8 @@ public class BitBoards extends BitBoardHelper{
 		int file = from % 8;
 		int rank = from / 8;
 
-		long sliderAM = (!isWhite ? whiteRooksAM | whiteBishopsAM | whiteQueensAM : blackRooksAM | blackBishopsAM | blackQueensAM);
-		long sliderSquare = (!isWhite ? whiteQueensBB | whiteRooksBB | whiteBishopsBB : blackQueensBB | blackRooksBB | blackBishopsBB);
+		long sliderAM = (!isWhite ? whiteRooksAM | whiteQueensAM : blackRooksAM | blackQueensAM);
+		long sliderSquare = (!isWhite ? whiteQueensBB | whiteRooksBB : blackQueensBB | blackRooksBB);
 		long kingSquare = (isWhite? whiteKingBB : blackKingBB);
 		long movingPiece = 1L << from;
 		long blocked = allBB & ~kingSquare;
@@ -249,26 +249,25 @@ public class BitBoards extends BitBoardHelper{
 
 		// Step 1
 		if ((sliderAM & movingPiece) != 0) {
+			possibleRay = 0L;
 			//Step 2
 			// Generate horizontal ray bitboard, w/o the current square
 			long horizontal = (0xFFL << (((rank) * 8) & ~(1L << from)));
 			long vertical = (0x0101010101010101L << (file) & ~(1L << from));
-			long diagonalPos = generatePositiveDiagonal(from) & ~(1L << from);
-			long diagonalNeg = generateNegativeDiagonal(from) & ~(1L << from);
+
 
 			// Step 3
 			if ((kingSquare & horizontal) != 0) {
-				possibleRay = horizontal;
+				possibleRay |= horizontal;
 
-			} else if ((kingSquare & vertical) != 0) {
-				possibleRay = vertical;
-
-			} else if ((kingSquare & diagonalPos) != 0) {
-				possibleRay = diagonalPos;
-
-			} else if ((kingSquare & diagonalNeg) != 0) {
-				possibleRay = diagonalNeg;
 			}
+
+			if ((kingSquare & vertical) != 0) {
+				possibleRay |= vertical;
+
+			}
+
+			//Board.printBitBoard(possibleRay, false);
 
 			// Step 4
 			if ((possibleRay & sliderSquare) == 0) {
@@ -280,6 +279,7 @@ public class BitBoards extends BitBoardHelper{
 			inBetween &= ~(kingSquare | movingPiece);
 			inBetween &= possibleRay;
 
+			//Board.printBitBoard(inBetween, false);
 			// If there is a piece between moving piece and king all moves are possible
 			if ((inBetween & blocked) != 0) {
 				possibleRay = ~0L;
@@ -289,6 +289,53 @@ public class BitBoards extends BitBoardHelper{
 		return possibleRay;
 	}
 
+	public static long checkDiagonalPin(int from, boolean isWhite){
+		long sliderAM = (!isWhite ? whiteBishopsAM | whiteQueensAM : blackBishopsAM | blackQueensAM);
+		long sliderSquare = (!isWhite ? whiteQueensBB | whiteBishopsBB : blackQueensBB | blackBishopsBB);
+		long kingSquare = (isWhite? whiteKingBB : blackKingBB);
+		long movingPiece = 1L << from;
+		long blocked = allBB & ~kingSquare;
+		long possibleRay = ~0L;
+		
+		// Step 1
+		if ((sliderAM & movingPiece) != 0) {
+			possibleRay = 0L;
+			
+			//Step 2
+			long diagonalPos = generatePositiveDiagonal(from) & ~(1L << from);
+			long diagonalNeg = generateNegativeDiagonal(from) & ~(1L << from);
+			
+			// Step 3
+			if ((kingSquare & diagonalPos) != 0) {
+				possibleRay |= diagonalPos;
+			}
+			
+			if ((kingSquare & diagonalNeg) != 0) {
+				possibleRay |= diagonalNeg;
+			}
+
+			//Board.printBitBoard(possibleRay, false);
+
+			// Step 4
+			if ((possibleRay & sliderSquare) == 0) {
+				possibleRay = ~0L;
+			}
+
+			//Step 5
+			long inBetween = bitsBetween(kingSquare, movingPiece);
+			inBetween &= ~(kingSquare | movingPiece);
+			inBetween &= possibleRay;
+
+			//Board.printBitBoard(inBetween, false);
+			// If there is a piece between moving piece and king all moves are possible
+			if ((inBetween & blocked) != 0) {
+				possibleRay = ~0L;
+			}
+		}
+		//Check this long against the current possibleMoves -> possibleMoves & possibleRay = legal moves.
+		return possibleRay;
+
+	}
 
 	//method for pawns only
 	public static boolean checkEnPassantPin(int from, boolean isWhite, int epFile) {	
@@ -343,17 +390,17 @@ public class BitBoards extends BitBoardHelper{
 			long inBetween = bitsBetween(kingSquare, movingPawn >> 1);		
 			inBetween &= ~(kingSquare | movingPawn | verticalEP);
 			inBetween &= possibleRay;
-			
-			
 
-			
+
+
+
 			blocked &= possibleRay;
-			
+
 			// If there is more than a single piece between moving piece and king en passant is still possible
 			if ((inBetween & blocked) == 0) {
-				
-					possible = false;
-				
+
+				possible = false;
+
 			}
 		}
 
@@ -377,8 +424,8 @@ public class BitBoards extends BitBoardHelper{
 		long diagonalPos = generatePositiveDiagonal(from);
 		long diagonalNeg = generateNegativeDiagonal(from);
 		long kingSquare = 1L << from;
-		
-		
+
+
 
 
 		//SLIDERS
@@ -403,7 +450,6 @@ public class BitBoards extends BitBoardHelper{
 			}
 		}
 		if ((kingSquare & enemyQueens) != 0) {
-			System.out.println("CP1");
 			long enemyPiece = (!isWhite ? whiteQueensBB:blackQueensBB);
 			if ((enemyPiece & diagonalPos) != 0) {
 				possibleMoves &= ~diagonalPos;
@@ -412,15 +458,12 @@ public class BitBoards extends BitBoardHelper{
 				possibleMoves &= ~diagonalNeg;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & horizontal) != 0) {
-				System.out.println("CP2");
-				Board.printBitBoard(horizontal, false);
 				possibleMoves &= ~horizontal;
 				possibleMoves |= enemyPiece;
 			} else if ((enemyPiece & vertical) != 0) {
 				possibleMoves &= ~vertical;
 				possibleMoves |= enemyPiece;
 			}
-			Board.printBitBoard(possibleMoves, false);
 
 		}
 		return possibleMoves;
@@ -495,6 +538,19 @@ public class BitBoards extends BitBoardHelper{
 		// Apply the mask to get the bits between the two positions
 		return mask & ~(kingBoard);
 	}
+
+	public static boolean isInCheck(boolean isWhite) {
+		// Step 1: find out if king attacked
+		long enemyAttacks = (!isWhite ? whiteAM : blackAM);
+		long kingSquare = (isWhite ? whiteKingBB : blackKingBB);
+
+		if ((enemyAttacks & kingSquare) != 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 
 	//method to update all BB

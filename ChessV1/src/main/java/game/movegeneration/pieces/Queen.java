@@ -98,12 +98,14 @@ public class Queen implements PieceI {
 				}
 			}
 			//Remove options when king in check
-			long checkedMask = BitBoards.singleCheck(from, isWhite);
+			long checkedMask = BitBoards.singleCheck(isWhite);
 			if (checkedMask != 0) {
 				possibleMoves &= checkedMask;
 			}
 			//Remove options when pinned
-			possibleMoves &= BitBoards.checkPin(from, isWhite);
+			possibleMoves &= BitBoards.checkOrthogonalPin(from, isWhite);
+			possibleMoves &= BitBoards.checkDiagonalPin(from, isWhite);
+			
 		}
 		return possibleMoves;
 	}
