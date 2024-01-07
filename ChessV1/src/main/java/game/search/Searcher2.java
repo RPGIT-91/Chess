@@ -8,12 +8,14 @@ import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.PieceI;
 
 public class Searcher2 {
+	private static final boolean turnOnMoveOrdering = true;
+
 	public int movesCalculated;
 	public Move bestMoveSoFar;
 	public int bestEvalSoFar;
 	public int bestEvalDepth2;
 	public int startingDepth;
-	
+
 	public int quiescenceDepth = 4;
 
 	public void calcBestMove(Board board, int depth) {
@@ -90,16 +92,16 @@ public class Searcher2 {
 
 	}
 	public int quiescenceSearch(Board board, int alpha, int beta, int counter) {
-		
+
 		//limit quiescence search depth
-		
-		
+
+
 		// captures aren't forced, so see what the evaluation is without captures
 		// Otherwise the position may be evaluated as bad even if good non-capturing moves are available
 
 		movesCalculated++;
-		
-		
+
+
 		counter++;
 
 		if (counter == quiescenceDepth) {
@@ -110,7 +112,7 @@ public class Searcher2 {
 
 		int evaluation = eval.Evaluate(board.gameStateStack.peek().getIsWhiteToMove());
 		//
-		
+
 		// issues arise when enemy only has one option to recapture, and it is a bad move
 		if (evaluation >= beta) {
 			//System.out.println("                  beta cutoff" + ",     alpha: " + alpha + ",     beta: " + beta + ",    current eval: " + evaluation);
@@ -186,6 +188,10 @@ public class Searcher2 {
 				}		
 			}
 		}
+		if (turnOnMoveOrdering) {
+			MoveOrdering order = new MoveOrdering(moves);
+			order.orderMoves(board, moves);
+		}
 		return moves;
 	}
 
@@ -211,6 +217,11 @@ public class Searcher2 {
 				}
 			}
 		}
+
+		if (turnOnMoveOrdering) {
+			MoveOrdering order = new MoveOrdering(captureMoves);
+			order.orderMoves(board, captureMoves);
+		}		
 		return captureMoves;
 	}
 }
