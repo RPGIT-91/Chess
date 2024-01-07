@@ -37,6 +37,7 @@ public class Searcher {
 		if (depth == 0) {
 			movesCalculated++;
 			//keep searching until the position is quiet
+			
 			int evaluation = quiescenceSearch(board, alpha, beta, maximizingPlayer);
 
 			return evaluation;

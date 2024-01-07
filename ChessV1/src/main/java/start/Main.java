@@ -39,8 +39,10 @@ public class Main{
 		//board.loadFENBoard("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1 ");
 
 		//board.loadFENBoard("7k/8/8/8/8/8/8/7K w - - 0 1");
-		//board.loadFENBoard("rkb5/pp6/8/1P6/8/8/8/K4B2 b - - 0 1");
-		//board.loadFENBoard("knb5/p2p4/1p6/pP1P4/PpBp4/1PpP4/B1P5/KB6 b - - 0 1");
+		//board.loadFENBoard("kqp5/ppp1N3/8/8/6K1/2Q5/8/8 w - - 0 1");
+//		board.loadFENBoard("kqp5/ppp5/4N3/8/6K1/2Q5/8/8 w - - 0 1");
+//		board.loadFENBoard("kq6/p7/PP6/8/8/p7/P7/KQ6 w - - 0 1");
+		board.loadFENBoard("8/3KP3/8/8/8/8/6k1/7q b - - 0 1");
 		
 		// Game Start
 		SwingUtilities.invokeLater(new Runnable() {

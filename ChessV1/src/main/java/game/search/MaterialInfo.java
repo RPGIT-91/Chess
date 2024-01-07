@@ -13,17 +13,17 @@ public class MaterialInfo {
 
 	public int materialScore;
 	public int materialValue;
-	private float endgameT;
+	public float endgameT;
 	
 	private int pieceSquareScore;
 	private int pawnScore;
 	private int pawnShieldScore;
 	
-	private static final int PawnValue = 100;
-	private static final int KnightValue = 300;
-	private static final int BishopValue = 320;
-	private static final int RookValue = 500;
-	private static final int QueenValue = 900;
+	public static final int PawnValue = 100;
+	public static final int KnightValue = 300;
+	public static final int BishopValue = 320;
+	public static final int RookValue = 500;
+	public static final int QueenValue = 900;
 	
 	private static final int queenEndgameWeight = 45;
 	private static final int rookEndgameWeight = 20;
