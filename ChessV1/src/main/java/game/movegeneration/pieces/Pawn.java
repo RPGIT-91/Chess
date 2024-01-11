@@ -1,7 +1,6 @@
 package game.movegeneration.pieces;
 
 import game.movegeneration.*;
-import game.board.Board;
 import game.board.GameState;
 
 public class Pawn implements PieceI {

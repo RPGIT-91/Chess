@@ -1,6 +1,5 @@
 package game.movegeneration;
 
-import game.board.Board;
 import game.movegeneration.pieces.*;
 
 public class BitBoards extends BitBoardHelper{

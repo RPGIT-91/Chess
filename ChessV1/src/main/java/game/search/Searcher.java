@@ -1,253 +1,184 @@
 package game.search;
 
-import java.util.List;
 import java.util.ArrayList;
-//import java.util.Random;
+import java.util.List;
 
 import game.board.Board;
 import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.PieceI;
 
 public class Searcher {
-	public static int movesCalculated;
-	public static Move bestMoveSoFar;
-	public static int bestEvalSoFar;
-	public static int bestEvalDepth2;
-	public static int startingDepth;
+	// 
+	private static final boolean turnOnMoveOrdering = true;
+	private static final boolean turnOnAlphaBeta = true;
 
-	public static void calcBestMove(Board board, int depth) {
+	//limit quiescence search depth
+	private int quiescenceDepth = 10; //ply
+	
+	private static final boolean showDebugInfo = true;
+
+	public int movesCalculated;
+	public Move bestMoveSoFar;
+	public int bestEvalSoFar;
+	public int bestEvalDepth2;
+	public int startingDepth;
+
+
+	public void calcBestMove(Board board, int depth) {
 		startingDepth = depth;
 
 		movesCalculated = 0;
 		bestMoveSoFar = null;
-		int alpha = Integer.MIN_VALUE;
-		int beta = Integer.MAX_VALUE;
+		int alpha =  -1000001;
+		int beta =   1000000;
 		//	boolean maximizingPlayer = board.gameStateStack.peek().getIsWhiteToMove();
 
 		bestEvalSoFar = startSearch(board, depth, alpha, beta, true);
 
-		System.out.println("Best Eval: " + bestEvalSoFar + " Best Move: " + Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo()));
+		//System.out.println("Best Eval: " + bestEvalSoFar + " Best Move: " + Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo()));
 	}
 
 
 	//maximizing player starts as true and is switched after every move as to minimize the opponents score
-	// i.e. 
-	public static int startSearch(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
-
+	private int startSearch(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
 		if (depth == 0) {
-			movesCalculated++;
-			//keep searching until the position is quiet
-			
-			int evaluation = quiescenceSearch(board, alpha, beta, maximizingPlayer);
-
-			return evaluation;
-		} else {
-			List<Move> possibleMoves = generateMoves(board);
-			//if no bestmove selected yet, set it to the first move, just in case it breaks.
-			if (bestMoveSoFar == null) {
-				bestMoveSoFar = possibleMoves.get(0);
-			}
-
-			if (maximizingPlayer) {
-				int maxEval = Integer.MIN_VALUE;
-
-				for (Move move : possibleMoves) {          
-					board.movePiece(move.getFrom(), move.getTo());           
-					//recursive search til depth of 0
-					int eval = startSearch(board, depth - 1, alpha, beta, false);
-
-					board.loadPreviousBoard();
-
-					//Evaluate final position and save move if new best move is found           
-					if (eval > maxEval) {
-						maxEval = eval;
-						if (depth == startingDepth) {
-							bestMoveSoFar = move; // Update best move at the starting depth
-						}
-					}
-					System.out.println("MaxEval: " + maxEval + " eval: " + eval);
-
-					alpha = Math.max(alpha, eval);
-
-
-
-					if (depth == 2) {
-						System.out.println("Depth 2: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha  + ",     beta: " + beta + ",    current eval: " + eval);
-						System.out.println();
-						System.out.println();
-					}
-
-					if (depth == 1) {
-						System.out.println("     Depth 1: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha + ",     beta: " + beta +",    current eval: " + eval);
-						System.out.println();
-					}
-
-
-					if (beta <= alpha) {
-						break; // Beta cut-off
-					}
-				}
-				return maxEval;
-
-			} else {
-				int minEval = Integer.MAX_VALUE;
-
-				for (Move move : possibleMoves) {
-					board.movePiece(move.getFrom(), move.getTo());
-					int eval = startSearch(board, depth - 1, alpha, beta, true);
-					board.loadPreviousBoard();
-
-					minEval = Math.min(minEval, eval);
-					beta = Math.min(beta, eval);
-
-					if (depth == 2) {
-						System.out.println("Depth 2: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha  + ",     beta: " + beta + ",    current eval: " + eval);
-						System.out.println();
-						System.out.println();
-					}
-
-					if (depth == 1) {
-						System.out.println("     Depth 1: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha + ",     beta: " + beta +",    current eval: " + eval);
-					}
-
-					if (beta <= alpha) {
-						break; // Alpha cut-off
-					}
-				}
-				return minEval;
-			}
+			int counter = 0;
+			return quiescenceSearch(board, alpha, beta, counter, maximizingPlayer);
 		}
 
-	}
+		List<Move> possibleMoves = generateMoves(board);
 
-	public static int quiescenceSearch(Board board, int alpha, int beta, boolean maximizingPlayer) {
-		// captures aren't forced, so see what the evaluation is without captures
-		// Otherwise the position may be evaluated as bad even if good non-capturing moves are available
-
-		Evaluation eval = new Evaluation(board);
-		//System.out.println("Evaluation from white: " + board.gameStateStack.peek().getIsWhiteToMove() + " is maximizer: " + maximizingPlayer);
-		int evaluation = eval.Evaluate(board.gameStateStack.peek().getIsWhiteToMove());		//evaluation 
-		
-		
-		List<Move> capturingMoves = generateCaptureMoves(board);
-		
-		// if no captures available return current evaluation
-		if (capturingMoves.isEmpty()) {
-			if (maximizingPlayer) {
-				return evaluation;
-			} else {
-				return evaluation;
+		// if no moves available return depending on stalemate or checkmate
+		if (possibleMoves.isEmpty()) {
+			if (BitBoards.isInCheck(false)){
+				return -999999;
 			}
+			return 0;
 		}
-		
-		System.out.println();
-		System.out.println("       Commencing with Quiesence Search Results. " +  "white to Move: " + board.gameStateStack.peek().getIsWhiteToMove());
 
-		if (maximizingPlayer) {
+		if (bestMoveSoFar == null) {
+			bestMoveSoFar = possibleMoves.get(0);
+		}
+
+		for (Move move : possibleMoves) {
+			board.movePiece(move.getFrom(), move.getTo());
+			int evaluation = -startSearch(board, depth - 1, -beta, -alpha, !maximizingPlayer);
+			board.loadPreviousBoard();
+
+			if (evaluation > alpha) {
+				alpha = evaluation;
+				if (depth == startingDepth) {
+					bestMoveSoFar = move; // Update best move at the starting depth
+				}
+			}
+			if (showDebugInfo) {
+				debugInfo(depth, move, alpha, beta, evaluation);	
+			}
 			
-			//sth here fix
-//			if (evaluation >= beta) {
-//				return beta; // Beta cutoff, position is already good enough
-//			}
-			alpha = Math.max(evaluation, alpha);
-
-			int maxEval = Integer.MIN_VALUE;
-			
-			
-			for (Move capture : capturingMoves) {
-				board.movePiece(capture.getFrom(), capture.getTo());
-
-				//Search recursively for further captures
-				evaluation = quiescenceSearch(board, beta, alpha, false);
-				board.loadPreviousBoard();
-				
-				maxEval = Math.max(maxEval, evaluation);
-				alpha = Math.max(alpha, evaluation);
-
+			if (turnOnAlphaBeta) {
 				if (evaluation >= beta) {
 					break; // Beta cutoff
 				}
-
-				// Update alpha if score is higher
-				alpha = Math.max(evaluation, alpha); 
-				System.out.println("               capture Move: " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo())+ " evaluation: " + evaluation);
-				
-
-			}	     
-
-			return alpha;
-
-		} else {
-//			if (evaluation <= alpha) {
-//				return alpha; // Alpha cutoff, position is already good enough
-//			}
-			beta = Math.min(evaluation, beta);
-
-
-			int minEval = Integer.MAX_VALUE;
-			for (Move capture : capturingMoves) {
-				board.movePiece(capture.getFrom(), capture.getTo());
-
-				// Search recursively for further captures
-				evaluation = quiescenceSearch(board, beta, alpha, true);
-
-				board.loadPreviousBoard();
-
-				minEval = Math.min(minEval, evaluation);
-				beta = Math.min(beta, evaluation);                                
-
-				if (evaluation <= alpha) {
-					break; // Alpha cut-off
-				}
-				System.out.println("               capture Move: " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo())+ " evaluation: " + evaluation);
-				
 			}
-			return beta;				
 		}
+		return alpha;
 
 	}
+	private int quiescenceSearch(Board board, int alpha, int beta, int counter, boolean maximizingPlayer) {
 
-	public static int quiescenceSearchBase(Board board, int alpha, int beta, boolean maximizingPlayer) {
 		// captures aren't forced, so see what the evaluation is without captures
 		// Otherwise the position may be evaluated as bad even if good non-capturing moves are available
+		movesCalculated++;
 
 		Evaluation eval = new Evaluation(board);
+		int evaluation = eval.Evaluate(board.gameStateStack.peek().getIsWhiteToMove());
 
-		int evaluation = eval.Evaluate(true);
 
-		if (evaluation >= beta) {
-			return beta; // Beta cutoff, position is already good enough
+		//not working as intended
+		if (turnOnAlphaBeta) {
+			if (evaluation >= beta) {	
+				return beta; // Beta cutoff, position is already good enough
+				//can run into the issue of not searching further moves when the first capture in a capture chain is not good enough
+			}
 		}
-		alpha = Math.max(evaluation, alpha);
+
+		alpha = Math.max(evaluation, alpha); // Update alpha if score is higher
+
+		//Limit quiescence search depth artificially
+		counter = counter + 1;
+		if (counter == quiescenceDepth + 1) {
+			System.out.println("        quiescence depth limiter");
+			return beta;
+		}
+
 
 
 		// Generate capturing moves
 		List<Move> capturingMoves = generateCaptureMoves(board);
 
+		if (capturingMoves.isEmpty()) {
+			return evaluation;
+		}
+
 		for (Move capture : capturingMoves) {
-			System.out.println("capture Move: " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo()));
+			//evaluates the last position to the beta of 
+
+
 			board.movePiece(capture.getFrom(), capture.getTo());
 
 			//Search recursively for further captures
-			evaluation = -quiescenceSearch(board, -beta, -alpha, true);
+			evaluation = -quiescenceSearch(board, -beta, -alpha, counter, !maximizingPlayer);
+
+//			Evaluation eval2 = new Evaluation(board);
+//			int evaluation2 = -eval2.Evaluate(board.gameStateStack.peek().getIsWhiteToMove());
 
 			board.loadPreviousBoard();
 
-			if (evaluation >= beta) {
-				return beta; // Beta cutoff
+
+
+			if (turnOnAlphaBeta) {
+
+				if (!maximizingPlayer) {
+					if (evaluation >= beta) {
+						if (showDebugInfo) {
+							System.out.println("        XXX W   Beta cutoff  " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo())+ ",     alpha: " + alpha + ",     beta: " + beta + ",    current eval: " + evaluation);							
+						}
+						break; // Beta cutoff
+					}
+				} else {
+					if (evaluation <= beta) {
+						if (showDebugInfo) {
+							System.out.println("        XXX B   Beta cutoff  " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo())+ ",     alpha: " + alpha + ",     beta: " + beta + ",    current eval: " + evaluation);
+						}
+						break; // Beta cutoff
+					}								
+				}
+
 			}
 
-			// Update alpha if score is higher
-			alpha = Math.max(evaluation, alpha); 
+			if (maximizingPlayer) {
+				if (evaluation > alpha) {
+					alpha = evaluation;
+				}
+			} else {
+				if (evaluation < alpha) {
+					alpha = evaluation;
+				}
+			}
+
+
+
+			System.out.println("            capture Move: " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo()) + "                alpha: " + alpha + ",    beta: " + beta + ",      eval: " + evaluation);
+
 
 		}
-
+		System.out.println("");
 
 		return alpha;
 	}
 
 	//only generate for colour to move
-	public static List<Move> generateMoves(Board board) {
+	private static List<Move> generateMoves(Board board) {
 		PieceI[] currentBoard = board.square;
 		List<Move> moves = new ArrayList<>();
 
@@ -270,10 +201,35 @@ public class Searcher {
 				}		
 			}
 		}
+		if (turnOnMoveOrdering) {
+			MoveOrdering order = new MoveOrdering(moves);
+			order.orderMoves(board, moves);
+		}
 		return moves;
 	}
+	
+	private void debugInfo(int depth, Move move, int alpha, int beta, int evaluation) {
+		if (depth == 3) {
+			System.out.println("Depth 3: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha  + ",     beta: " + beta + ",    current eval: " + evaluation);
+			System.out.println("--------------------------------------");
+			System.out.println();
+			System.out.println();
+			System.out.println();
+		}
 
-	public static List<Move> generateCaptureMoves(Board board){
+		if (depth == 2) {
+			System.out.println("Depth 2: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha  + ",     beta: " + beta + ",    current eval: " + evaluation);
+			System.out.println();
+			System.out.println();
+		}
+
+		if (depth == 1) {
+			System.out.println("     Depth 1: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha + ",     beta: " + beta +",    current eval: " + evaluation);
+		}
+	}
+	
+	
+	private static List<Move> generateCaptureMoves(Board board){
 		List<Move> captureMoves = generateMoves(board);
 
 		//remove all moves that are not capturing
@@ -281,6 +237,7 @@ public class Searcher {
 		for (int i = captureMoves.size() - 1; i >= 0; i--) {
 			long moveBoard = 1L << captureMoves.get(i).getTo();
 			//			Board.printBitBoard(moveBoard, false);
+			//			Board.printBitBoard(moveBoard & BitBoards.blackBB, false);
 			//remove all non captures
 			if (colourToMove) {
 				//check if moveTo is a capture of a black piece, remove if not
@@ -294,79 +251,11 @@ public class Searcher {
 				}
 			}
 		}
+
+		if (turnOnMoveOrdering) {
+			MoveOrdering order = new MoveOrdering(captureMoves);
+			order.orderMoves(board, captureMoves);
+		}		
 		return captureMoves;
 	}
-
-
-	//belongs into before loadPreviousBoard
-	//	if (depth == 5) {
-	//				System.out.println();
-	//				System.out.println("Depth 5 " + Board.translateBBToSquare(searchMoves.getFrom()) + " " + Board.translateBBToSquare(searchMoves.getTo()));
-	//			}
-	//			
-	//			if (depth == 4) {
-	//				System.out.println();
-	//				System.out.println("------ Depth 4  " + Board.translateBBToSquare(searchMoves.getFrom()) + " " + Board.translateBBToSquare(searchMoves.getTo()));
-	//			}
-	//			
-	//			
-	//			if (depth == 3) {
-	//				System.out.println();
-	//				System.out.println("Depth 3 " + Board.translateBBToSquare(searchMoves.getFrom()) + " " + Board.translateBBToSquare(searchMoves.getTo()));
-	//				
-	//			}
-	//
-	//			if (depth == 2) {
-	//				//System.out.println("Response: " + response);
-	//				System.out.println(" - "+ board.square[Board.toBBSquare(searchMoves.getFrom())].getPieceType() + " "+ Board.translateBBToSquare(searchMoves.getFrom()) + " " + Board.translateBBToSquare(searchMoves.getTo()));
-	//				response = 0;
-	//				
-	//				
-	//				pawnCounter = 0;
-	//				knightCounter = 0;
-	//				bishopCounter = 0;
-	//				rookCounter = 0;
-	//				queenCounter = 0;
-	//				kingCounter = 0;
-	//			}
-	//			
-	//			if (depth == 1) {				
-	//				
-	//				int pieceType = board.square[Board.toBBSquare(searchMoves.getFrom())].getPieceType();
-	//				if (pieceType == 6) {
-	//					kingCounter++;
-	//				} else if (pieceType == 5) {
-	//					queenCounter++;
-	//				} else if (pieceType == 4) {
-	//					rookCounter++;
-	//				} else if (pieceType == 3) {
-	//					bishopCounter++;
-	//				} else if (pieceType == 2) {
-	//					knightCounter++;
-	//				} else if (pieceType == 1) {
-	//					pawnCounter++;
-	//				} 
-	//				
-	//				if (pawnCounter + knightCounter + bishopCounter + rookCounter + queenCounter + kingCounter == listMoves.size()) {
-	//					 System.out.println("Total moves: " + listMoves.size());
-	//					System.out.println("Pawn Moves: " + pawnCounter);
-	//					System.out.println("Knight Moves: " + knightCounter);
-	//					System.out.println("Bishop Moves: " + bishopCounter);
-	//					System.out.println("Rook Moves: " + rookCounter);
-	//					System.out.println("Queen Moves: " + queenCounter);
-	//					System.out.println("King Moves: " + kingCounter);
-	//					System.out.println();
-	//				}
-	//				//System.out.println( board.square[Board.toBBSquare(searchMoves.getFrom())].getPieceType() + " -- " + Board.translateBBToSquare(searchMoves.getFrom()) + " " + Board.translateBBToSquare(searchMoves.getTo()));
-	//				response += listMoves.size();
-	//				
-	//			}	
-
-	//	
-	//	public static void makeRandomMove(Board board) {
-	//		generateMoves(board);
-	//		System.out.println(moves.size());
-	//		int rnd = random.nextInt(moves.size() - 1);
-	//		board.movePiece(moves.get(rnd +1).getFrom(), moves.get(rnd + 1).getTo());
-	//	}
 }

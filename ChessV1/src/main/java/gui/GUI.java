@@ -4,9 +4,7 @@ import javax.swing.*;
 
 import game.board.Board;
 import game.movegeneration.pieces.PieceI;
-import game.search.Move;
 import game.search.Searcher;
-import game.search.Searcher2;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -222,7 +220,7 @@ public class GUI extends JFrame {
 	
 	private void updateSidePanel() {
 		Component[] components = sidePanel.getComponents();
-		Searcher2 searcher = new Searcher2();
+		Searcher searcher = new Searcher();
 		searcher.calcBestMove(chessBoard, depth);
 		
 		if (components[2] instanceof JLabel) {

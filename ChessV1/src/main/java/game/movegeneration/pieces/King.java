@@ -90,7 +90,7 @@ public class King implements PieceI {
 
 			//King Side Castle
 			//add restrictions if in between squares are occupied or attacked
-			moveSquare = (kingPiece << 1) | (kingPiece << 2);
+			moveSquare = kingPiece | (kingPiece << 1) | (kingPiece << 2);
 			freeSquare = moveSquare;
 			
 			//if blocked or attacked remove

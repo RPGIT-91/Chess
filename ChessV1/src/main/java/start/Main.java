@@ -2,7 +2,6 @@ package start;
 import javax.swing.SwingUtilities;
 
 import game.board.*;
-import game.search.Searcher;
 import gui.GUI;
 
 // # Introduction
@@ -42,7 +41,12 @@ public class Main{
 		//board.loadFENBoard("kqp5/ppp1N3/8/8/6K1/2Q5/8/8 w - - 0 1");
 //		board.loadFENBoard("kqp5/ppp5/4N3/8/6K1/2Q5/8/8 w - - 0 1");
 //		board.loadFENBoard("kq6/p7/PP6/8/8/p7/P7/KQ6 w - - 0 1");
-		board.loadFENBoard("8/3KP3/8/8/8/8/6k1/7q b - - 0 1");
+//		board.loadFENBoard("8/3KP3/8/8/8/8/6k1/7q b - - 0 1");
+//		board.loadFENBoard("k4R2/1p4R1/8/8/8/5p2/1Q3q2/K7 b - - 0 1");
+		
+		
+		//Test Position
+//		board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
 		
 		// Game Start
 		SwingUtilities.invokeLater(new Runnable() {

@@ -16,8 +16,8 @@ public class MaterialInfo {
 	public float endgameT;
 	
 	private int pieceSquareScore;
-	private int pawnScore;
-	private int pawnShieldScore;
+//	private int pawnScore;
+//	private int pawnShieldScore;
 	
 	public static final int PawnValue = 100;
 	public static final int KnightValue = 300;
@@ -31,11 +31,11 @@ public class MaterialInfo {
 	private static final int knightEndgameWeight = 10;
 	
 
-	private static final int[] passedPawnBonuses = {0, 120, 80, 50, 30, 15, 15};
-	private static final int[] isolatedPawnPenaltyByCount = {0, -10, -25, -50, -75, -75, -75, -75, -75};
-	private static final int[] kingPawnShieldScores = {4, 7, 4, 3, 6, 3};
-
-	private static final float endgameMaterialStart = RookValue * 2 + BishopValue + KnightValue;
+//	private static final int[] passedPawnBonuses = {0, 120, 80, 50, 30, 15, 15};
+//	private static final int[] isolatedPawnPenaltyByCount = {0, -10, -25, -50, -75, -75, -75, -75, -75};
+//	private static final int[] kingPawnShieldScores = {4, 7, 4, 3, 6, 3};
+//
+//	private static final float endgameMaterialStart = RookValue * 2 + BishopValue + KnightValue;
 
 	public MaterialInfo(boolean isWhite) {
 		if (isWhite) {
