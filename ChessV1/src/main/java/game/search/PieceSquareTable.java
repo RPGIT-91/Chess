@@ -1,11 +1,16 @@
-/**
- * Utility class for reading values from piece square tables.
- */
-
 package game.search;
 
 import game.board.Board;
 
+/**
+ * Utility class for reading values from piece square tables.
+ * 
+ * @see game.search.Evaluation
+ * @see game.search.MaterialInfo
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 abstract class PieceSquareTable {
 
 	/**

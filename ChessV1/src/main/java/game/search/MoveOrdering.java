@@ -1,9 +1,3 @@
-/**
- * Class responsible for ordering chess moves based on heuristics to improve search efficiency.
- * 
- * @author Ryu
- * @version 1.0
- */
 package game.search;
 
 import java.util.List;
@@ -12,6 +6,15 @@ import game.board.Board;
 import game.movegeneration.BitBoardHelper;
 import game.movegeneration.BitBoards;
 
+/**
+ * Class responsible for ordering chess moves based on heuristics to improve search efficiency.
+ * 
+ * @see game.search.Searcher
+ * @see game.search.Move
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class MoveOrdering {
     private int[] moveScores;
     private static final int maxMoveCount = 218;

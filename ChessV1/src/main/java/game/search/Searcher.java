@@ -1,11 +1,3 @@
-/**
- * Class responsible for searching the game tree and finding the best move.
- * 
- * Implementation of a negamax search with alpha-beta pruning and quiescence search.
- * 
- * 
- */
-
 package game.search;
 
 import java.util.ArrayList;
@@ -15,6 +7,18 @@ import game.board.Board;
 import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.PieceI;
 
+/**
+ * Class responsible for searching the game tree and finding the best move.
+ * 
+ * Implementation of a negamax search with alpha-beta pruning and quiescence search.
+ * 
+ * @see game.search.Evaluation
+ * @see game.search.MoveOrdering
+ * @see game.board.Board
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class Searcher {
 	// 
 	private static final boolean turnOnMoveOrdering = true;

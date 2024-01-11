@@ -1,15 +1,15 @@
-/**
- * The BitBoardHelper class provides helper methods for working with bitboards.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.movegeneration;
 
 import java.util.ArrayList;
 
-
+/**
+ * The BitBoardHelper class provides helper methods for working with bitboards.
+ * 
+ * @see game.movegeneration.BitBoards
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class BitBoardHelper {
 	/**
 	 * Bitmask for file A.

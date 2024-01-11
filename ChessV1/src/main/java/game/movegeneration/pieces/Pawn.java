@@ -1,14 +1,17 @@
-/**
- * The Pawn class represents the Pawn chess piece and implements the PieceI interface.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.movegeneration.pieces;
 
 import game.movegeneration.*;
 import game.board.GameState;
+
+/**
+ * The Pawn class represents the Pawn chess piece and implements the PieceI interface.
+ * 
+ * @see game.movegeneration.BitBoards
+ * @see game.movegeneration.PieceI
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 
 public class Pawn implements PieceI {
 	/**

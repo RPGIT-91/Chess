@@ -1,15 +1,16 @@
-/**
- * Class to manage information about the material in the current chess position.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.search;
 
 import game.movegeneration.BitBoardHelper;
 import game.movegeneration.BitBoards;
 
+/**
+ * Class to manage information about the material in the current chess position.
+ * 
+ * @see game.search.Evaluation
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class MaterialInfo extends PieceSquareTable{
 	private int numPawns;
 	private int numBishops;

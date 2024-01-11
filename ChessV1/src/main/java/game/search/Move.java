@@ -1,12 +1,13 @@
+package game.search;
+
 /**
  * Represents a chess move from one square to another.
+ * 
+ * @see game.search.MoveOrdering
  * 
  * @author Ryu
  * @version 1.0
  */
-
-package game.search;
-
 public class Move {
     private int from;
     private int to;

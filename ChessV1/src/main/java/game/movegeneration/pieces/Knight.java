@@ -1,10 +1,3 @@
-/**
- * The Knight class represents the Knight chess piece and implements the PieceI interface.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.movegeneration.pieces;
 
 import java.util.List;
@@ -12,6 +5,15 @@ import java.util.List;
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 
+/**
+ * The Knight class represents the Knight chess piece and implements the PieceI interface.
+ * 
+ * @see game.movegeneration.BitBoards
+ * @see game.movegeneration.PieceI
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class Knight implements PieceI {
 	/**
      * Bitboard representing knight attacks.

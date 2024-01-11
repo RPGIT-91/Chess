@@ -1,15 +1,17 @@
-/**
- * The FEN class represents operations related to the Forsyth-Edwards Notation (FEN) in a chess game.
- * It provides methods to generate and parse FEN strings, representing the state of a chess board.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.board;
 
 import game.movegeneration.pieces.PieceI;
 
+/**
+ * The FEN class represents operations related to the Forsyth-Edwards Notation (FEN) in a chess game.
+ * It provides methods to generate and parse FEN strings, representing the state of a chess board.
+ * 
+ * @see game.board.Board
+ * @see game.board.GameState
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class FEN {
 	 /**
      * The starting position FEN string for a standard chess game.

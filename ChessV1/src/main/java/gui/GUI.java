@@ -1,12 +1,3 @@
-/**
- * The GUI class represents the graphical user interface for a chess game.
- * It extends JFrame and provides a chessboard, side panel with buttons,
- * and labels to display game information.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package gui;
 
 import javax.swing.*;
@@ -19,6 +10,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * The GUI class represents the graphical user interface for a chess game.
+ * It extends JFrame and provides a chessboard, side panel with buttons,
+ * and labels to display game information.
+ * 
+ * @see game.board.Board
+ * @see game.search.Searcher
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private String[] pieceStrings = {"♟", "♞", "♝", "♜", "♛", "♚"};

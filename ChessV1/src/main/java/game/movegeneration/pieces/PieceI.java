@@ -1,14 +1,21 @@
-/**
- * The PieceI interface represents a chess piece and provides methods for interacting with it.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.movegeneration.pieces;
 
 import game.board.GameState;
 
+/**
+ * The PieceI interface represents a chess piece and provides methods for interacting with it.
+ * 
+ * @see game.movegeneration.BitBoards
+ * @see game.movegeneration.pieces.Pawn
+ * @see game.movegeneration.pieces.Knight
+ * @see game.movegeneration.pieces.Bishop
+ * @see game.movegeneration.pieces.Rook
+ * @see game.movegeneration.pieces.Queen
+ * @see game.movegeneration.pieces.King
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public interface PieceI {	
 	public static final long fileA = 0x101010101010101L;
 	public static final long notAFile = ~fileA;

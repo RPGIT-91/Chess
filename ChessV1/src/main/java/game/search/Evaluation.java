@@ -1,17 +1,17 @@
-/**
- * Class to compute the current evaluation of a chess position.
- * 
- * @author Ryu
- * @version 1.0
- */
-
 package game.search;
 
 import game.board.Board;
 import game.movegeneration.BitBoards;
 
-
-//Class to return current evaluation of position
+/**
+ * Class to compute the current evaluation of a chess position.
+ * 
+ * @see game.search.Searcher
+ * @see game.search.MaterialInfo
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 public class Evaluation {
 	/**
      * Information about material for the white side.

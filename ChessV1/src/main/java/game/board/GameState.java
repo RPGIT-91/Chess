@@ -1,13 +1,13 @@
+package game.board;
 /**
  * The GameState class represents the current state of a chess game, including turn information,
  * captured pieces, en passant, castling rights, and other relevant details.
  * 
+ * @see game.board.Board
+ * 
  * @author Ryu
  * @version 1.0
  */
-
-package game.board;
-
 public class GameState {
 	//not implemented yet.
 //	private int repetitionWhite;

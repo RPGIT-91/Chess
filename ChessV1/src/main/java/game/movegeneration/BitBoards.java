@@ -1,3 +1,10 @@
+package game.movegeneration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import game.movegeneration.pieces.*;
+
 /**
  * The BitBoards class represents a collection of bitboards for various chess pieces and their positions.
  * It includes methods for updating these bitboards based on chess moves and checking for certain conditions,
@@ -10,17 +17,11 @@
  * Note: This class assumes a standard 8x8 chessboard representation.
  * </p>
  *
+ * @see game.movegeneration.BitBoardHelper
+ * 
  * @author Ryu
  * @version 1.0
  */
-
-package game.movegeneration;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import game.movegeneration.pieces.*;
-
 public class BitBoards extends BitBoardHelper{
 	// Pieces
 	public static long pawnsBB;
