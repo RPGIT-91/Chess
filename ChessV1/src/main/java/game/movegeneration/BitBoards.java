@@ -1,5 +1,8 @@
 package game.movegeneration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import game.movegeneration.pieces.*;
 
 public class BitBoards extends BitBoardHelper{
@@ -550,6 +553,18 @@ public class BitBoards extends BitBoardHelper{
 		}
 	}
 
+	public static List<Long> createIndividualBitboards(long bitboard) {
+		List<Long> individualBitboards = new ArrayList<>();
+
+		long remainingBits = bitboard;
+		while (remainingBits != 0) {
+			long leastSignificantBit = remainingBits & -remainingBits;
+			individualBitboards.add(leastSignificantBit);
+			remainingBits ^= leastSignificantBit;  // Clear the least significant bit
+		}
+
+		return individualBitboards;
+	}
 
 
 	//method to update all BB

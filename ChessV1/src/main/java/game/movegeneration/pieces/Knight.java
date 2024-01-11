@@ -70,7 +70,7 @@ public class Knight implements PieceI {
 
 		long pieceBB = (isWhite ? BitBoards.whiteKnightsBB:BitBoards.blackKnightsBB);
 
-		List<Long> individualBBKnight = PieceI.createIndividualBitboards(pieceBB);
+		List<Long> individualBBKnight = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBKnight) {
 			// Knight moves are represented by relative positions

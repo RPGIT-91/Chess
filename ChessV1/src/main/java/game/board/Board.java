@@ -7,6 +7,31 @@ import java.io.*;
 import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.PieceI;
 
+/**
+ * The `Board` class represents a chess board and provides methods for making moves,
+ * managing game state, and interacting with bitboards.
+ * In a sense it functions similiar to the classical controller.
+ * 
+ * <p>
+ * The board is represented as an 8x8 array of squares, and each square may contain a chess piece.
+ * Various methods are provided for adding, moving, and removing pieces, as well as for generating
+ * valid moves and managing game state.
+ * </p>
+ * 
+ * <p>
+ * Whenever a change is made on the board this class further ensures that the BitBoards inside the BitBoard class are also updated.
+ * </p>
+ * Position paramaters like to and from are always given in BitBoard annotation.
+ * 
+ * 
+ * @see game.movegeneration.BitBoards
+ * @see game.movegeneration.pieces.PieceI
+ * @see game.board.GameState
+ * @see game.board.FEN
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 
 public class Board {
 	public static final int whiteIndex = 0;
@@ -36,14 +61,29 @@ public class Board {
 
 	}
 
-	//Add to Square centric Board and to bitboards.
+	/**
+	 * Adds a piece to the chess board at the specified position.
+	 * Also syncs the piece to the bitboards.
+	 * 
+	 * @param pos          The position on the board where the piece will be added (0-63).
+	 * @param pieceType    The type of the piece to be added.
+	 * @param pieceColour  The color of the piece to be added (0 for white, 1 for black).
+	 * 
+	 * Add to Square centric Board and to bitboards.
+	 */
 	public void addPiece(int pos, int pieceType, int pieceColour) {
 		int posBB = toBBSquare(pos);
 		PieceI newPiece = PieceI.addPiece(pos, pieceType, pieceColour);
 		square[posBB] = newPiece;
 	}
 
-
+	/**
+	 * Moves a piece from one position to another on the chess board.
+	 * Coordinates manipulation of gameState, BitBoards, and Board.
+	 * 
+	 * @param from  The current position of the piece (0-63).
+	 * @param to    The target position for the piece (0-63).
+	 */
 	public void movePiece(int from, int to) {
 		int fromBB = toBBSquare(from);
 		int toBB = toBBSquare(to);
@@ -168,7 +208,7 @@ public class Board {
 					int removedPiece = 0;
 					if (pieceToRemove != null) {
 						removedPiece = pieceToRemove.getPieceType();
-						
+
 						//remove castling if rook captured on starting position
 						if (pieceToRemove.getPieceType() == 4) {
 							if (to == 0) {
@@ -182,7 +222,7 @@ public class Board {
 							}
 						}
 					}
-					
+
 					// remove castle right
 					if (pieceToMove.getPieceType() == 6) { //King moves
 						if (pieceToMove.getPieceColour() == 0) {
@@ -204,8 +244,8 @@ public class Board {
 							bQueenSide = false;							
 						}
 					}
-					
-					
+
+
 
 					plyCounter = plyCounter + 1;
 
@@ -215,9 +255,9 @@ public class Board {
 
 					BitBoards.updateAll();
 					//System.out.println("Move " + moveCounter + " successful   " + from + " - " + to);
-					
+
 					pushToFENStack(FEN.currentFen(square, currentGameState));
-					
+
 				} else {
 					// Handle invalid move
 					System.out.println("Invalid move:  " + from + " - " + to);
@@ -240,7 +280,13 @@ public class Board {
 		//white		0 -> 1			0 -> 1 -> 1			0 -> 1 -> 1
 		//black		0 -> 0			1 -> 1 -> 0			1 -> 1 -> 0
 	}
-	
+
+	/**
+	 * Displays the valid moves for a piece at the specified position.
+	 * 
+	 * @param from  The position of the piece for which valid moves are to be displayed.
+	 * @return      A long value representing the valid moves as a bitboard.
+	 */
 	public long showValidMoves(int from) {
 		int fromBB = toBBSquare(from);
 		long validMoves = 0L;
@@ -249,28 +295,48 @@ public class Board {
 		}
 		return validMoves;
 	}
-	
+
+
+	/**
+	 * Loads a chess board position from a Forsyth-Edwards Notation (FEN) string.
+	 * 
+	 * @param fen The FEN string representing the board position.
+	 */
 	public void loadFENBoard(String fen) {
 		//No check for if valid fen.
 		LoadPositionFromFEN(fen, true, true);
 	}
-	
+
+	/**
+	 * Loads the previous chess board position from the game state stack.
+	 */
 	public void loadPreviousBoard(){
 		//pop GameState from stack
 		restorePreviousState();
-		
+
 		//pop fen from stack and load 
 		fenStack.pop();
 		LoadPositionFromFEN(fenStack.peek(), false, false);
-		
+
 	}
 
 	// Load the starting position
-	public void loadStartPosition() {
+	/**
+	 * Loads the standard starting position of a chess game on the chess board.
+	 * The method internally calls {@code LoadPositionFromFEN} with the FEN string
+	 * representing the standard starting position.
+	 */
+	private void loadStartPosition() {
 		LoadPositionFromFEN(FEN.START_POSITION_FEN, true, true);		
 	}
 
 	// # Helper
+	/**
+	 * Inverts the position info. A standard 2D Array is nubered 0-63 but from top to botom unlike the BitBoard which is numbered bottom to top.
+	 *
+	 * @param pos The position on the chess board (0 to 63).
+	 * @return The corresponding index in the bitboard.
+	 */
 	public static int toBBSquare(int pos) {
 		int bbPos = 0;
 		int squareIndex = pos / 8;
@@ -305,12 +371,22 @@ public class Board {
 		return bbPos;
 	}
 
+	/**
+	 * Saves the current game state by pushing it onto the game state stack.
+	 *
+	 * @param currentGameState The current game state to be saved.
+	 */
 	private void saveGameState(GameState currentGameState) {
 		// Save the current game state by pushing it onto the stack
 		gameStateStack.push(currentGameState);
 	}
 
 	//for eval.
+	/**
+	 * Restores the previous game state by popping from the game state stack.
+	 *
+	 * @return The restored previous game state, or {@code null} if the stack is empty.
+	 */
 	private GameState restorePreviousState() {
 		// Restore the previous game state by popping from the stack
 		if (!gameStateStack.isEmpty()) {
@@ -320,37 +396,182 @@ public class Board {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * Saves the current game state to a file named "SavedGame.txt" in the project directory.
+	 * The method writes the FEN string of the current game state to the file.
+	 * Displays a success message if the save is successful, otherwise prints an error message.
+	 */
 	public void saveGame() {
 		try {
-            // Get the project directory
-            String projectDirectory = System.getProperty("user.dir");
+			// Get the project directory
+			String projectDirectory = System.getProperty("user.dir");
 
-            // Create a File object for the SavedGame.txt file in the project directory
-            File savedGameFile = new File(projectDirectory, "SavedGame.txt");
+			// Create a File object for the SavedGame.txt file in the project directory
+			File savedGameFile = new File(projectDirectory, "SavedGame.txt");
 
-            // If the file doesn't exist, create it
-            if (!savedGameFile.exists()) {
-                savedGameFile.createNewFile();
-            }
+			// If the file doesn't exist, create it
+			if (!savedGameFile.exists()) {
+				savedGameFile.createNewFile();
+			}
 
-            // Write the value from fenStack.peek() into the file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(savedGameFile))) {
-                String fenValue = fenStack.peek(); // Assuming fenStack is a Stack<String>
-                writer.write(fenValue);
-                System.out.println("Game saved successfully.");
-            } catch (IOException e) {
-                System.err.println("Error writing to file: " + e.getMessage());
-            }
+			// Write the value from fenStack.peek() into the file
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(savedGameFile))) {
+				String fenValue = fenStack.peek(); // Assuming fenStack is a Stack<String>
+				writer.write(fenValue);
+				System.out.println("Game saved successfully.");
+			} catch (IOException e) {
+				System.err.println("Error writing to file: " + e.getMessage());
+			}
 
-        } catch (IOException e) {
-            System.err.println("Error creating file: " + e.getMessage());
-        }
-    }
-    
+		} catch (IOException e) {
+			System.err.println("Error creating file: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Loads a chess board position from a Forsyth-Edwards Notation (FEN) string.
+	 *
+	 * @param fen         The FEN string representing the board position.
+	 * @param newGame     Flag indicating whether to clear the game state stack and FEN stack for a new game.
+	 * @param pushToStack Flag indicating whether to push the FEN string onto the FEN stack.
+	 */
+	private void LoadPositionFromFEN(String fen, boolean newGame, boolean pushToStack) {
+		if (newGame) {
+			gameStateStack.clear();
+			fenStack.clear();
+			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
+			saveGameState(initialGameState);
+		}
+
+		//clear BitBoards.
+		Arrays.fill(square, null);
+		BitBoards.allBB = 0L;
+		BitBoards.clear(1);
 
 
-	// # debugging
+		String[] sections = fen.split(" ");
+
+		int file = 0;
+		int rank = 7;
+
+		for (char symbol : sections[0].toCharArray()) {
+			if (symbol == '/') {
+				file = 0;
+				rank--;
+			} else {
+				if (Character.isDigit(symbol)) {
+					file += Character.getNumericValue(symbol);
+				} else {
+					int pieceColour = (Character.isUpperCase(symbol)) ? 0 : 1;
+					int pieceType;
+
+					switch (Character.toLowerCase(symbol)) {
+					case 'p':
+						pieceType = 1;
+						break;
+					case 'n':
+						pieceType = 2;
+						break;
+					case 'b':
+						pieceType = 3;
+						break;
+					case 'r':
+						pieceType = 4;
+						break;
+					case 'q':
+						pieceType = 5;				
+						break;
+					case 'k':
+						pieceType = 6;
+						break;		
+					default:
+						pieceType = 0;
+						break;
+					}
+
+					addPiece(rank * 8 + file, pieceType, pieceColour);
+					file++;
+				}
+			}
+		}
+		try {
+			gameStateStack.peek().setWhiteToMove(sections[1].equals("w"));
+
+			String castlingRights = sections[2];
+			gameStateStack.peek().setwKingSideCastle(castlingRights.contains("K"));
+			gameStateStack.peek().setwQueenSideCastle(castlingRights.contains("Q"));
+			gameStateStack.peek().setbKingSideCastle(castlingRights.contains("k"));
+			gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
+
+			// Default values
+			int epFile = -1;
+			int fiftyMoveCounter = 0;
+			int moveCounter = 0;
+
+			if (sections.length > 3) {
+				String enPassantFileName = String.valueOf(sections[3].charAt(0));
+				if (FEN.fileNames.contains(enPassantFileName)) {
+					epFile = FEN.fileNames.indexOf(enPassantFileName);			
+				}
+			}
+
+			// Half-move clock
+			if (sections.length > 4) {
+				fiftyMoveCounter = Integer.parseInt(sections[4]);
+			}
+			// Full move number
+			if (sections.length > 5) {
+				moveCounter = Integer.parseInt(sections[5]);
+			}
+
+			// plyCounter if black to move +1
+			int inc = 0;
+			if (!gameStateStack.peek().getIsWhiteToMove()) {
+				inc = 1;
+			}
+			gameStateStack.peek().setPlyCounter((moveCounter * 2) - 2 + inc);
+
+			gameStateStack.peek().setEnPassantFile(epFile);
+			gameStateStack.peek().setFiftyMoveCounter(fiftyMoveCounter);
+			gameStateStack.peek().setMoveCounter(moveCounter);
+
+			if (pushToStack) {
+				pushToFENStack(fen);
+			}
+
+		} catch (ArrayIndexOutOfBoundsException e){
+			System.err.println("Error: Array index out of bounds. " + e.getMessage());
+		}
+
+
+	}
+
+	/**
+	 * Pushes the given FEN string onto the FEN stack.
+	 *
+	 * @param fen The FEN string to be pushed onto the stack.
+	 */
+	private void pushToFENStack(String fen) {
+		fenStack.push(fen);
+		//System.out.println(fen);
+	}
+
+	/**
+	 * Translates a bitboard index to a chess board square representation.
+	 *
+	 * @param bb The bitboard index.
+	 * @return A string representation of the corresponding chess board square.
+	 */
+	public static String translateBBToSquare(int bb) {
+		int file = bb % 8;
+		int rank = bb / 8;
+
+		return FEN.fileNames.charAt(file) + "" + (rank + 1);
+	}
+
+
+	// ################ debugging helper.
 	//method to display Board in Console
 	public void printBoard(PieceI[] square) {
 		int count = 0;
@@ -500,127 +721,5 @@ public class Board {
 		System.out.println();
 		System.out.println();
 	}
-	
-	private void LoadPositionFromFEN(String fen, boolean newGame, boolean pushToStack) {
-		if (newGame) {
-			gameStateStack.clear();
-			fenStack.clear();
-			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
-			saveGameState(initialGameState);
-		}
 
-		//clear BitBoards.
-		Arrays.fill(square, null);
-		BitBoards.allBB = 0L;
-		BitBoards.clear(1);
-		
-		
-		String[] sections = fen.split(" ");
-		
-		int file = 0;
-		int rank = 7;
-		
-		for (char symbol : sections[0].toCharArray()) {
-			if (symbol == '/') {
-				file = 0;
-				rank--;
-			} else {
-				if (Character.isDigit(symbol)) {
-					file += Character.getNumericValue(symbol);
-				} else {
-					int pieceColour = (Character.isUpperCase(symbol)) ? 0 : 1;
-					int pieceType;
-
-					switch (Character.toLowerCase(symbol)) {
-					case 'p':
-						pieceType = 1;
-						break;
-					case 'n':
-						pieceType = 2;
-						break;
-					case 'b':
-						pieceType = 3;
-						break;
-					case 'r':
-						pieceType = 4;
-						break;
-					case 'q':
-						pieceType = 5;				
-						break;
-					case 'k':
-						pieceType = 6;
-						break;		
-					default:
-						pieceType = 0;
-						break;
-					}
-					
-					addPiece(rank * 8 + file, pieceType, pieceColour);
-					file++;
-				}
-			}
-		}
-		try {
-			gameStateStack.peek().setWhiteToMove(sections[1].equals("w"));
-
-			String castlingRights = sections[2];
-			gameStateStack.peek().setwKingSideCastle(castlingRights.contains("K"));
-			gameStateStack.peek().setwQueenSideCastle(castlingRights.contains("Q"));
-			gameStateStack.peek().setbKingSideCastle(castlingRights.contains("k"));
-			gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
-
-			// Default values
-			int epFile = -1;
-			int fiftyMoveCounter = 0;
-			int moveCounter = 0;
-
-			if (sections.length > 3) {
-				String enPassantFileName = String.valueOf(sections[3].charAt(0));
-				if (FEN.fileNames.contains(enPassantFileName)) {
-					epFile = FEN.fileNames.indexOf(enPassantFileName);			
-				}
-			}
-
-			// Half-move clock
-			if (sections.length > 4) {
-				fiftyMoveCounter = Integer.parseInt(sections[4]);
-			}
-			// Full move number
-			if (sections.length > 5) {
-				moveCounter = Integer.parseInt(sections[5]);
-			}
-			
-			// plyCounter if black to move +1
-			int inc = 0;
-			if (!gameStateStack.peek().getIsWhiteToMove()) {
-				inc = 1;
-			}
-			gameStateStack.peek().setPlyCounter((moveCounter * 2) - 2 + inc);
-			
-			gameStateStack.peek().setEnPassantFile(epFile);
-			gameStateStack.peek().setFiftyMoveCounter(fiftyMoveCounter);
-			gameStateStack.peek().setMoveCounter(moveCounter);
-			
-			if (pushToStack) {
-				pushToFENStack(fen);
-			}
-			
-		} catch (ArrayIndexOutOfBoundsException e){
-            System.err.println("Error: Array index out of bounds. " + e.getMessage());
-		}
-		
-		
-	}
-	
-	public void pushToFENStack(String fen) {
-		fenStack.push(fen);
-		//System.out.println(fen);
-	}
-	
-	public static String translateBBToSquare(int bb) {
-		int file = bb % 8;
-		int rank = bb / 8;
-
-		return FEN.fileNames.charAt(file) + "" + (rank + 1);
-	}
 }

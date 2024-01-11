@@ -84,7 +84,7 @@ public class Rook implements PieceI {
 		long possibleMoves = 0L;
 		long pieceBB = (isWhite ? BitBoards.whiteRooksBB : BitBoards.blackRooksBB);
 
-		List<Long> individualBBRook = PieceI.createIndividualBitboards(pieceBB);
+		List<Long> individualBBRook = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBRook) {
 			for (int move : rookMoves) {

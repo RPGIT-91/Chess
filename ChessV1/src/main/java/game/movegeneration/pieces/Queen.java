@@ -116,7 +116,7 @@ public class Queen implements PieceI {
 		long pieceBB = (isWhite ? BitBoards.whiteQueensBB:BitBoards.blackQueensBB);
 
 
-		List<Long> individualBBQueen = PieceI.createIndividualBitboards(pieceBB);
+		List<Long> individualBBQueen = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBQueen) {
 			for (int move : bishopMoves) {

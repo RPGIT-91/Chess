@@ -84,7 +84,7 @@ public class Bishop implements PieceI {
 
 		long pieceBB = (isWhite ? BitBoards.whiteBishopsBB:BitBoards.blackBishopsBB);
 
-		List<Long> individualBBBishop = PieceI.createIndividualBitboards(pieceBB);
+		List<Long> individualBBBishop = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBBishop) {
 			for (int move : bishopMoves) {

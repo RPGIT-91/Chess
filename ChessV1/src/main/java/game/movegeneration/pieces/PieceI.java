@@ -45,20 +45,6 @@ public interface PieceI {
 		}
 	}
 
-
-	public static List<Long> createIndividualBitboards(long bitboard) {
-		List<Long> individualBitboards = new ArrayList<>();
-
-		long remainingBits = bitboard;
-		while (remainingBits != 0) {
-			long leastSignificantBit = remainingBits & -remainingBits;
-			individualBitboards.add(leastSignificantBit);
-			remainingBits ^= leastSignificantBit;  // Clear the least significant bit
-		}
-
-		return individualBitboards;
-	}
-
 	//Debugging
 	default void printMask(long bits) {
 		for (int rank = 7; rank >= 0; rank--) {
