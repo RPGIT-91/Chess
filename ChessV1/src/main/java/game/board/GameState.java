@@ -1,8 +1,12 @@
-package game.board;
+/**
+ * The GameState class represents the current state of a chess game, including turn information,
+ * captured pieces, en passant, castling rights, and other relevant details.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 
-// Class to save the current GameState
-// who's turn, en Pssant, Castling, fifty move counter.
-// captured piece -> important for unmaking moves
+package game.board;
 
 public class GameState {
 	//not implemented yet.
@@ -21,6 +25,17 @@ public class GameState {
 	private boolean bKingSideCastle;
 	private boolean bQueenSideCastle;
 
+	 /**
+     * Constructs a new GameState with the specified initial values.
+     *
+     * @param capturedPiece      The type of the captured piece.
+     * @param enPassantFile      The file index for en passant.
+     * @param plyCounter         The half-move counter.
+     * @param wKingSideCastle    Whether white can castle kingside.
+     * @param wQueenSideCastle   Whether white can castle queenside.
+     * @param bKingSideCastle    Whether black can castle kingside.
+     * @param bQueenSideCastle   Whether black can castle queenside.
+     */
 	public GameState(int capturedPiece, int enPassantFile, int plyCounter, boolean wKingSideCastle, boolean wQueenSideCastle, boolean bKingSideCastle, boolean bQueenSideCastle) {
 		this.capturedPieceType = capturedPiece;
 		this.enPassantFile = enPassantFile;
@@ -36,6 +51,13 @@ public class GameState {
 	}
 	
 	//set a bitboard of possible Castle Squares based on colour and game state
+	
+    /**
+     * Gets the bitboard representing possible castle squares based on color and game state.
+     *
+     * @param isWhite Whether the color is white.
+     * @return The bitboard representing possible castle squares.
+     */
 	public long getCastleBoard(boolean isWhite) {
 		long castleBoard = 0L;
 
@@ -58,12 +80,19 @@ public class GameState {
 		}
 		return castleBoard;
 	}
+	
+	/**
+     * Resets the game state, including castle rights and turn information.
+     */
 	public void resetGameState() {
 		resetCastleRight();
 		setWhiteToMove(true);
 		this.plyCounter = 0;
 	}
 	
+	/**
+     * Resets castle rights to their default values.
+     */
 	public void resetCastleRight() {
 		wKingSideCastle = true;
 		wQueenSideCastle = true;

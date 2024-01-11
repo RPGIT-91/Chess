@@ -1,3 +1,10 @@
+/**
+ * Class to compute the current evaluation of a chess position.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.search;
 
 import game.board.Board;
@@ -6,22 +13,49 @@ import game.movegeneration.BitBoards;
 
 //Class to return current evaluation of position
 public class Evaluation {
+	/**
+     * Information about material for the white side.
+     */
 	private MaterialInfo whiteMaterial;
+	/**
+     * Information about material for the black side.
+     */
 	private MaterialInfo blackMaterial;
 	
+	/**
+     * Mop-up score for the white side.
+     */
 	private int mopUpWhite;
+	/**
+     * Mop-up score for the black side.
+     */
 	private int mopUpBlack;
 	
-	
+	/**
+     * Flag indicating whether the side being evaluated is white.
+     */
 	public boolean isWhite;
-	
+	/**
+     * Material score for the position.
+     */
 	public int materialScore;
 
+    /**
+     * Evaluation score for the white side.
+     */
+
 	public int whiteEval;
+	/**
+     * Evaluation score for the black side.
+     */
 	public int blackEval;
 	
 	
-	// initialize Material Info for position
+	/**
+     * Initializes Material Info for the given position.
+     *
+     * @param board The chessboard for which to perform the evaluation.
+     */
 	public Evaluation(Board board) {
 		isWhite = board.gameStateStack.peek().getIsWhiteToMove();
 		
@@ -33,7 +67,15 @@ public class Evaluation {
 
 	}
 	
-	// End Game incentive to make it easier to checkmate
+	/**
+     * End Game incentive to make it easier to checkmate.
+     *
+     * @param isWhite           Indicates whether the side being evaluated is white.
+     * @param myMaterial        Material score for the side being evaluated.
+     * @param opponentMaterial  Material score for the opponent side.
+     * @param endgameWeight     Weight factor for the endgame.
+     * @return The mop-up score for the given conditions.
+     */
 	public int MopUpEval(boolean isWhite, int myMaterial, int opponentMaterial, float endgameWeight) {
         int mopUpScore = 0;
 
@@ -70,11 +112,15 @@ public class Evaluation {
         return 0;
     }
 	
-
-	// Performs static evaluation of the current position.
-	// The position is assumed to be 'quiet', i.e no captures are available that could drastically affect the evaluation.
-	// The score that's returned is given from the perspective of whoever's turn it is to move.
-	// So a positive score means the player who's turn it is to move has an advantage, while a negative score indicates a disadvantage.
+	/**
+     * Performs static evaluation of the current position.
+     * The position is assumed to be 'quiet', i.e no captures are available that could drastically affect the evaluation.
+     * The score that's returned is given from the perspective of whoever's turn it is to move.
+     * So a positive score means the player who's turn it is to move has an advantage, while a negative score indicates a disadvantage.
+     *
+     * @param isWhite Indicates whether the side being evaluated is white.
+     * @return The evaluation score for the current position from the perspective of the side being evaluated.
+     */
 	public int Evaluate(boolean isWhite) {
 		int perspective = isWhite ? 1 : -1;
 		

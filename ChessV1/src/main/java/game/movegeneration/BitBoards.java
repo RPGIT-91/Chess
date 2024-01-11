@@ -1,3 +1,19 @@
+/**
+ * The BitBoards class represents a collection of bitboards for various chess pieces and their positions.
+ * It includes methods for updating these bitboards based on chess moves and checking for certain conditions,
+ * such as whether a king is in check or generating legal moves for a piece.
+ * <p>
+ * The class also provides methods for handling different types of pins (diagonal, orthogonal) and checks
+ * on the chessboard.
+ * </p>
+ * <p>
+ * Note: This class assumes a standard 8x8 chessboard representation.
+ * </p>
+ *
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration;
 
 import java.util.ArrayList;
@@ -48,6 +64,14 @@ public class BitBoards extends BitBoardHelper{
 	public static long blackQueensAM;
 	public static long blackKingAM;
 
+	
+	/**
+     * Adds a piece to the specified position on the chessboard.
+     *
+     * @param pos         The position on the chessboard (0 to 63).
+     * @param pieceType   The type of the chess piece (1 for pawn, 2 for knight, etc.).
+     * @param pieceColour The color of the chess piece (0 for white, 1 for black).
+     */
 	public static void add(int pos, int pieceType, int pieceColour) {
 
 		//check if already set elsewhere and wether we are not adding a piece.none.
@@ -93,8 +117,12 @@ public class BitBoards extends BitBoardHelper{
 		}
 	}
 
-	// clear Bitboards on position
-	// not used
+	/**
+     * Clears the bitboards for a specific position on the chessboard.
+     *
+     * @param pos The position on the chessboard (0 to 63).
+     *            Note: This method is currently not used.
+     */
 	public static void clear(int pos) {
 		allBB = clearSquare(allBB, pos);
 
@@ -111,7 +139,12 @@ public class BitBoards extends BitBoardHelper{
 		updateAll();
 	}
 
-	//doesn't include double check by 2 queens.
+	/**
+     * Checks if the king of the specified color is in a double-check position.
+     *
+     * @param isWhite Indicates whether the king being checked is white.
+     * @return True if the king is in a double-check position; false otherwise.
+     */
 	public static boolean doubleCheck(boolean isWhite) {
 		int checks = 0;
 		long kingSquare = (isWhite? whiteKingBB : blackKingBB);
@@ -141,6 +174,13 @@ public class BitBoards extends BitBoardHelper{
 		return (checks < 1);
 	}
 
+	/**
+     * Checks if the king of the specified color is in a single-check position.
+     *
+     * @param isWhite Indicates whether the king being checked is white.
+     * @return A bitboard representing possible moves that resolve the single check.
+     *         Note: This method is specific to the color of the checked king.
+     */
 	public static long singleCheck(boolean isWhite) {
 		// Step 1: find out if king attacked
 		// Step 2: find out by which piece
@@ -232,6 +272,13 @@ public class BitBoards extends BitBoardHelper{
 		// this bitboard needs to be checked against the current moves.
 	}
 
+	/**
+     * Checks for possible orthogonal moves that avoid breaking a pin.
+     *
+     * @param from    The position of the piece to be moved.
+     * @param isWhite Indicates whether the moving piece is white.
+     * @return A bitboard with possible moves that don't break an orthogonal pin.
+     */
 	public static long checkOrthogonalPin(int from, boolean isWhite) {	
 		// Step 1: piece to move is attacked by enemy bishop, rook, queen. 
 		// Step 2: Find out which direction
@@ -291,6 +338,13 @@ public class BitBoards extends BitBoardHelper{
 		return possibleRay;
 	}
 
+	/**
+     * Checks for possible diagonal moves that avoid breaking a pin.
+     *
+     * @param from    The position of the piece to be moved.
+     * @param isWhite Indicates whether the moving piece is white.
+     * @return A bitboard with possible moves that don't break a diagonal pin.
+     */
 	public static long checkDiagonalPin(int from, boolean isWhite){
 		long sliderAM = (!isWhite ? whiteBishopsAM | whiteQueensAM : blackBishopsAM | blackQueensAM);
 		long sliderSquare = (!isWhite ? whiteQueensBB | whiteBishopsBB : blackQueensBB | blackBishopsBB);
@@ -339,7 +393,14 @@ public class BitBoards extends BitBoardHelper{
 
 	}
 
-	//method for pawns only
+	/**
+     * Checks for possible en passant moves that avoid breaking a pin.
+     *
+     * @param from    The position of the moving pawn.
+     * @param isWhite Indicates whether the moving pawn is white.
+     * @param epFile  The file of the en passant capture square.
+     * @return True if en passant is possible without breaking a pin; false otherwise.
+     */
 	public static boolean checkEnPassantPin(int from, boolean isWhite, int epFile) {	
 		// Step 1: piece to move or EnPassant capture square is attacked by enemy rook, bishop, queen. 
 		// Step 2: Find out which direction
@@ -410,6 +471,13 @@ public class BitBoards extends BitBoardHelper{
 		return possible;
 	}
 
+	/**
+     * Generates possible moves for the king when in check.
+     *
+     * @param from    The position of the king piece.
+     * @param isWhite Indicates whether the checking piece is white.
+     * @return A bitboard representing possible moves that resolve the check.
+     */
 	public static long checkKingInCheckMove(int from, boolean isWhite) {
 		// Step 1: remove King move into ray of check
 
@@ -472,75 +540,12 @@ public class BitBoards extends BitBoardHelper{
 		// this bitboard needs to be checked against the current moves.
 	}
 
-
-	private static long generateNegativeDiagonal(int square) {
-		long diagonal = 0L;
-		int row = square / 8;
-		int col = square % 8;
-
-		// Generate negative diagonal to the top left
-		while (row < 8 && col >= 0) {
-			diagonal |= (1L << (row * 8 + col));
-			row++;
-			col--;
-		}
-		row = square / 8;
-		col = square % 8;
-		// Generate negative diagonal to the bottom-right
-		while (row >= 0 && col < 8) {
-			diagonal |= (1L << (row * 8 + col));
-			row--;
-			col++;
-		}
-
-		return diagonal;
-	}
-
-	private static long generatePositiveDiagonal(int square) {
-		long diagonal = 0L;
-		int row = square / 8;
-		int col = square % 8;
-
-		// Generate positive diagonal to the top-right
-		while (row < 8 && col < 8) {
-			diagonal |= (1L << (row * 8 + col));
-			row++;
-			col++;
-		}
-		row = square / 8 - 1;
-		col = square % 8 - 1;
-		// Generate positive diagonal to the bottom-left
-		while (row >= 0 && col >= 0) {
-			diagonal |= (1L << (row * 8 + col));
-			row--;
-			col--;
-		}
-
-		return diagonal;
-	}
-
-	private static long bitsBetween(long kingBoard, long pieceBoard) {
-		// Find the indices of the set bits in each bitboard
-		int index1 = Long.numberOfTrailingZeros(kingBoard);
-		int index2 = Long.numberOfTrailingZeros(pieceBoard);
-
-		// Determine the minimum and maximum indices
-
-		// Ensure 1 comes before 2
-		if (index1 > index2) {
-			int temp = index1;
-			index1 = index2;
-			index2 = temp;
-		}
-
-		long mask = (1L << (index2 - index1 + 1)) - 1L;
-		mask <<= index1;
-
-
-		// Apply the mask to get the bits between the two positions
-		return mask & ~(kingBoard);
-	}
-
+	/**
+     * Checks if the king of the specified color is currently in check.
+     *
+     * @param isWhite Indicates whether the king being checked is white.
+     * @return True if the king is in check; false otherwise.
+     */
 	public static boolean isInCheck(boolean isWhite) {
 		// Step 1: find out if king attacked
 		long enemyAttacks = (!isWhite ? whiteAM : blackAM);
@@ -553,6 +558,12 @@ public class BitBoards extends BitBoardHelper{
 		}
 	}
 
+	/**
+     * Generates a list of individual bitboards from a combined bitboard.
+     *
+     * @param bitboard The combined bitboard representing multiple pieces.
+     * @return A list of individual bitboards for each piece.
+     */
 	public static List<Long> createIndividualBitboards(long bitboard) {
 		List<Long> individualBitboards = new ArrayList<>();
 
@@ -567,7 +578,10 @@ public class BitBoards extends BitBoardHelper{
 	}
 
 
-	//method to update all BB
+	/**
+     * Updates all bitboards based on the current positions of chess pieces.
+     * This method should be called after any changes to the piece positions.
+     */
 	public static void updateAll() {
 		whitePawnsBB = pawnsBB & whiteBB;
 		whiteBishopsBB = bishopsBB & whiteBB;
@@ -602,6 +616,95 @@ public class BitBoards extends BitBoardHelper{
 
 		whiteAM = whitePawnsAM | whiteBishopsAM | whiteKnightsAM | whiteRooksAM | whiteQueensAM | whiteKingAM;
 		blackAM = blackPawnsAM | blackBishopsAM | blackKnightsAM | blackRooksAM | blackQueensAM | blackKingAM;
+	}
+	
+	
+	// ### Helper Methods
+	/**
+     * Generates a bitboard representing the negative diagonal passing through the given square.
+     *
+     * @param square The index of the square (0 to 63) for which to generate the negative diagonal.
+     * @return The bitboard representing the negative diagonal passing through the specified square.
+     */
+	private static long generateNegativeDiagonal(int square) {
+		long diagonal = 0L;
+		int row = square / 8;
+		int col = square % 8;
+
+		// Generate negative diagonal to the top left
+		while (row < 8 && col >= 0) {
+			diagonal |= (1L << (row * 8 + col));
+			row++;
+			col--;
+		}
+		row = square / 8;
+		col = square % 8;
+		// Generate negative diagonal to the bottom-right
+		while (row >= 0 && col < 8) {
+			diagonal |= (1L << (row * 8 + col));
+			row--;
+			col++;
+		}
+
+		return diagonal;
+	}
+
+	/**
+     * Generates a bitboard representing the positive diagonal passing through the given square.
+     *
+     * @param square The index of the square (0 to 63) for which to generate the positive diagonal.
+     * @return The bitboard representing the positive diagonal passing through the specified square.
+     */
+	private static long generatePositiveDiagonal(int square) {
+		long diagonal = 0L;
+		int row = square / 8;
+		int col = square % 8;
+
+		// Generate positive diagonal to the top-right
+		while (row < 8 && col < 8) {
+			diagonal |= (1L << (row * 8 + col));
+			row++;
+			col++;
+		}
+		row = square / 8 - 1;
+		col = square % 8 - 1;
+		// Generate positive diagonal to the bottom-left
+		while (row >= 0 && col >= 0) {
+			diagonal |= (1L << (row * 8 + col));
+			row--;
+			col--;
+		}
+
+		return diagonal;
+	}
+
+	/**
+     * Finds the bits between two given bitboards (inclusive) along the same row, column, or diagonal.
+     *
+     * @param kingBoard   The bitboard of the first position.
+     * @param pieceBoard  The bitboard of the second position.
+     * @return A bitboard with the bits between the two positions (inclusive) set to 1.
+     */
+	private static long bitsBetween(long kingBoard, long pieceBoard) {
+		// Find the indices of the set bits in each bitboard
+		int index1 = Long.numberOfTrailingZeros(kingBoard);
+		int index2 = Long.numberOfTrailingZeros(pieceBoard);
+
+		// Determine the minimum and maximum indices
+
+		// Ensure 1 comes before 2
+		if (index1 > index2) {
+			int temp = index1;
+			index1 = index2;
+			index2 = temp;
+		}
+
+		long mask = (1L << (index2 - index1 + 1)) - 1L;
+		mask <<= index1;
+
+
+		// Apply the mask to get the bits between the two positions
+		return mask & ~(kingBoard);
 	}
 }
 

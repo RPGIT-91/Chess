@@ -1,3 +1,10 @@
+/**
+ * The Knight class represents the Knight chess piece and implements the PieceI interface.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration.pieces;
 
 import java.util.List;
@@ -6,14 +13,25 @@ import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class Knight implements PieceI {
+	/**
+     * Bitboard representing knight attacks.
+     */
 	public static long knightAttacks;
 
 	private final int pieceType = 2;
 	private final int pieceColour; // 0 for white, 1 for black
 
+	/**
+     * Array representing knight moves for move generation.
+     */
 	private static int[] knightMoves = {-17, -15, -10, -6, 6, 10, 15, 17};
 
-	//Constructor
+	/**
+     * Constructor for the Knight class.
+     *
+     * @param pieceColour The color of the knight (0 for white, 1 for black).
+     * @param pos         The initial position of the knight.
+     */
 	public Knight(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -64,6 +82,13 @@ public class Knight implements PieceI {
 		return possibleMoves;
 	}
 
+    /**
+     * Generates attacks for the knight of the same color on the board.
+     * Uses BitBoards to retrieve additional Piece Information and as such is static.
+     * 
+     * @param isWhite Whether the knight is white.
+     * @return Bitboard representing possible attacks.
+     */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		long possibleMoves = 0L;
 		knightAttacks = 0L;
@@ -95,7 +120,12 @@ public class Knight implements PieceI {
 	}
 
 
-	//5x5 to only return moves within the knights range.
+	/**
+     * Generates a 5x5 square mask centered around the given position to limit moves within the knight's range.
+     *
+     * @param position The position of the knight.
+     * @return Bitboard representing a 5x5 square mask.
+     */
 	public static long generate5x5SquareMask(long position) {
 		// Create a 5x5 square around the given position
 		long squareMask = 0L;

@@ -1,3 +1,10 @@
+/**
+ * The Rook class represents the Rook chess piece and implements the PieceI interface.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration.pieces;
 
 import java.util.List;
@@ -6,13 +13,25 @@ import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class Rook implements PieceI {
+	 /**
+     * Bitboard representing rook attacks.
+     */
 	public static long rookAttacks;
 
 	private final int pieceType = 4;
 	private final int pieceColour; // 0 for white, 1 for black
+	
+	/**
+	 * Array representing rook moves for move generation.
+	 */
 	private static int[] rookMoves = {-8, -1, 1, 8};
 
-	//Constructor
+	/**
+     * Constructor for the Rook class.
+     *
+     * @param pieceColour The color of the rook (0 for white, 1 for black).
+     * @param pos         The initial position of the rook.
+     */
 	public Rook(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -79,7 +98,13 @@ public class Rook implements PieceI {
 		return possibleMoves;
 	}
 
-
+	/**
+     * Generates attacks for the rook of the same color on the board.
+     * Uses BitBoards to retrieve additional Piece Information and as such is static.
+     * 
+     * @param isWhite Whether the rook is white.
+     * @return Bitboard representing possible attacks.
+     */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		long possibleMoves = 0L;
 		long pieceBB = (isWhite ? BitBoards.whiteRooksBB : BitBoards.blackRooksBB);
@@ -119,6 +144,8 @@ public class Rook implements PieceI {
 		return possibleMoves;
 
 	}
+	
+	@Override
 	public void toggleBB(int square, boolean isWhite){
 		BitBoards.rooksBB ^= 1L << square;
 

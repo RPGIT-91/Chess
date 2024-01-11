@@ -1,13 +1,30 @@
+/**
+ * The FEN class represents operations related to the Forsyth-Edwards Notation (FEN) in a chess game.
+ * It provides methods to generate and parse FEN strings, representing the state of a chess board.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.board;
 
 import game.movegeneration.pieces.PieceI;
 
 public class FEN {
+	 /**
+     * The starting position FEN string for a standard chess game.
+     */
 	public static final String START_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 	public static final String fileNames = "abcdefgh";
 
-
+	/**
+     * Generates the current FEN string based on the given chess board and game state.
+     *
+     * @param square    The array representing the chess board squares.
+     * @param gameState The current game state.
+     * @return The FEN string representing the current state of the chess board.
+     */
 	public static String currentFen(PieceI[] square, GameState gameState) {
 		StringBuilder fen = new StringBuilder();
 
@@ -107,6 +124,13 @@ public class FEN {
 		return fen.toString();
 	}
 
+	/**
+     * Converts the given file index and rank index to a square name in FEN format.
+     *
+     * @param fileIndex The file index (0-7).
+     * @param rankIndex The rank index (0-7).
+     * @return The FEN square name (e.g., "a1").
+     */
 	public static String SquareNameFromCoordinate(int fileIndex, int rankIndex) {
 		return fileNames.charAt(fileIndex) + "" + (rankIndex + 1);
 	}

@@ -1,16 +1,34 @@
+/**
+ * The King class represents the King chess piece and implements the PieceI interface.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration.pieces;
 
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class King implements PieceI {
+	/**
+     * Array representing king moves for move generation.
+     */
 	private static int[] kingMoves = {-9, -8, -7, -1, 1, 7, 8, 9};
 
+	/**
+     * Bitboard representing king attacks.
+     */
 	public static long kingAttacks;
 	private final int pieceType = 6;
 	private final int pieceColour; // 0 for white, 1 for black
 
-	//Constructor
+	/**
+     * Constructor for the King class.
+     *
+     * @param pieceColour The color of the king (0 for white, 1 for black).
+     * @param pos         The initial position of the king.
+     */
 	public King(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -111,7 +129,13 @@ public class King implements PieceI {
 	}
 
 
-
+	/**
+     * Generates attacks for the king of the same color on the board.
+     * Uses BitBoards to retrieve additional Piece Information and as such is static.
+     * 
+     * @param isWhite Whether the king is white.
+     * @return Bitboard representing possible attacks.
+     */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		long possibleMoves = 0L;
 		long newSquareMask = 0L;

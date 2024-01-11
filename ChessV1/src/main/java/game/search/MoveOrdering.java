@@ -1,3 +1,9 @@
+/**
+ * Class responsible for ordering chess moves based on heuristics to improve search efficiency.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 package game.search;
 
 import java.util.List;
@@ -13,10 +19,21 @@ public class MoveOrdering {
     private static final int squareControlledByOpponentPawnPenalty = 350;
     private static final int capturedPieceValueMultiplier = 10;
 
+    /**
+     * Creates a MoveOrdering object with the given move list.
+     *
+     * @param moveList The list of moves to be ordered.
+     */
     public MoveOrdering(List<Move> moveList) {
         moveScores = new int[maxMoveCount];
     }
 
+    /**
+     * Orders the given list of moves based on heuristics.
+     *
+     * @param board The current chess board.
+     * @param moves The list of moves to be ordered.
+     */
     public void orderMoves(Board board, List<Move> moves) {
 
         for (int i = 0; i < moves.size(); i++) {
@@ -59,6 +76,12 @@ public class MoveOrdering {
         sort(moves);
     }
 
+    /**
+     * Gets the value associated with a piece type.
+     *
+     * @param pieceType The type of chess piece.
+     * @return The value associated with the piece type.
+     */
     private static int getPieceValue(int pieceType) {
         switch (pieceType) {
             case 5:
@@ -75,7 +98,12 @@ public class MoveOrdering {
                 return 0;
         }
     }
-
+    
+    /**
+     * Sorts the list of moves based on their scores in descending order.
+     *
+     * @param moves The list of moves to be sorted.
+     */
     private void sort(List<Move> moves) {
         // Sort the moves list based on scores
         for (int i = 0; i < moves.size() - 1; i++) {

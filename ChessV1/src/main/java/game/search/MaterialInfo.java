@@ -1,9 +1,16 @@
+/**
+ * Class to manage information about the material in the current chess position.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.search;
 
 import game.movegeneration.BitBoardHelper;
 import game.movegeneration.BitBoards;
 
-public class MaterialInfo {
+public class MaterialInfo extends PieceSquareTable{
 	private int numPawns;
 	private int numBishops;
 	private int numQueens;
@@ -37,6 +44,12 @@ public class MaterialInfo {
 //
 //	private static final float endgameMaterialStart = RookValue * 2 + BishopValue + KnightValue;
 
+	
+	/**
+     * Creates an instance of MaterialInfo for the specified side.
+     *
+     * @param isWhite Indicates whether the side is white.
+     */
 	public MaterialInfo(boolean isWhite) {
 		if (isWhite) {
 			numPawns = Long.bitCount(BitBoards.whitePawnsBB); //try if it works.
@@ -67,6 +80,13 @@ public class MaterialInfo {
 		pieceSquareScore = EvaluatePieceSquareTables(isWhite, endgameT);
 	}
 	
+	/**
+     * Evaluates the piece square tables for the side in early and late phases.
+     *
+     * @param isWhite    Indicates whether the side is white.
+     * @param endgameT   Endgame transition factor.
+     * @return The value based on piece square tables.
+     */
 	private int EvaluatePieceSquareTables(boolean isWhite, float endgameT) {
 		int value = 0;
 		int pawnEarly = 0;
@@ -106,6 +126,14 @@ public class MaterialInfo {
 		return value;
 	}
 	
+	/**
+     * Evaluates a specific piece square table for the side.
+     *
+     * @param table    The piece square table to evaluate.
+     * @param PieceBB  Bitboard representing the pieces on the board.
+     * @param isWhite  Indicates whether the side is white.
+     * @return The value based on the specified piece square table.
+     */
 	private int EvaluatePieceSquareTable(int[] table, long PieceBB, boolean isWhite) {
 		int value = 0;
 		for (int pos : BitBoardHelper.getAllPos(PieceBB)) {
@@ -115,6 +143,11 @@ public class MaterialInfo {
 		return value;
 	}
 	
+	/**
+     * Calculates the sum of material score and piece square score.
+     *
+     * @return The sum of material score and piece square score.
+     */
 	public int Sum() {
 		return materialScore + pieceSquareScore;// + pawnScore + pawnShieldScore;
 	}

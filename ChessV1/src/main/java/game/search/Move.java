@@ -1,22 +1,42 @@
+/**
+ * Represents a chess move from one square to another.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.search;
 
 public class Move {
     private int from;
     private int to;
-    // You might include additional information such as promotion piece, capture flag, etc.
 
+    /**
+     * Creates a new Move object with the specified source and destination squares.
+     *
+     * @param from The square index from which the move originates.
+     * @param to   The square index to which the move is made.
+     */
     public Move(int from, int to) {
         this.from = from;
         this.to = to;
     }
 
+    /**
+     * Gets the square index from which the move originates.
+     *
+     * @return The square index from which the move originates.
+     */
     public int getFrom() {
         return from;
     }
 
+    /**
+     * Gets the square index to which the move is made.
+     *
+     * @return The square index to which the move is made.
+     */
     public int getTo() {
         return to;
     }
-
-    // You can include other methods or properties as needed
 }

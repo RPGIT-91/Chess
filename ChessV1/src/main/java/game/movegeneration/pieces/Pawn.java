@@ -1,15 +1,30 @@
+/**
+ * The Pawn class represents the Pawn chess piece and implements the PieceI interface.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration.pieces;
 
 import game.movegeneration.*;
 import game.board.GameState;
 
 public class Pawn implements PieceI {
+	/**
+     * Bitboard representing pawn attacks.
+     */
 	public static long pawnAttacks;
 
 	private final int pieceType = 1; // Unique identifier for Pawn
 	private final int pieceColour; // 0 for white, 1 for black
 
-	//Constructor
+	/**
+     * Constructor for the Pawn class.
+     *
+     * @param pieceColour The color of the pawn (0 for white, 1 for black).
+     * @param pos         The initial position of the pawn.
+     */
 	public Pawn(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -109,7 +124,13 @@ public class Pawn implements PieceI {
 	
 	
 
-
+	 /**
+     * Generates attacks for the pawn of the same color on the board.
+     * Uses BitBoards to retrieve additional Piece Information and as such is static
+     *
+     * @param isWhite Whether the pawn is white.
+     * @return Bitboard representing possible attacks.
+     */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		if (isWhite) {
 			pawnAttacks = ((BitBoards.whitePawnsBB << 9) & notAFile) | ((BitBoards.whitePawnsBB << 7) & notHFile);
@@ -133,7 +154,13 @@ public class Pawn implements PieceI {
 		}
 	}
 
-
+	/**
+     * Helper method to calculate pawn attacks.
+     *
+     * @param pawnBitboard The bitboard representing the pawn.
+     * @param isWhite      Whether the pawn is white.
+     * @return Bitboard representing pawn attacks.
+     */
 	private static long pawnAttacks(long pawnBitboard, boolean isWhite) {
 		if (isWhite) {
 			return ((pawnBitboard << 9) & notAFile) | ((pawnBitboard << 7) & notHFile);

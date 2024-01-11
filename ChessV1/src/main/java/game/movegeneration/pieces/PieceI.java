@@ -1,7 +1,11 @@
-package game.movegeneration.pieces;
+/**
+ * The PieceI interface represents a chess piece and provides methods for interacting with it.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
 
-import java.util.ArrayList;
-import java.util.List;
+package game.movegeneration.pieces;
 
 import game.board.GameState;
 
@@ -19,22 +23,61 @@ public interface PieceI {
 	public static final long rank7 = rank6 << 8;
 	public static final long Rank8 = rank7 << 8;
 
-	int getPieceType(); // Return a unique identifier for each piece type
-	int getPieceColour(); // Return the color of the piece (e.g., 0 for white, 1 for black)
+	/**
+     * Returns a unique identifier for each piece type.
+     * 0 for empty, 1 for pawn, 2 for knight, 3 for bishop, 4 for rook, 5 for queen, 6 for king
+     *
+     * @return The piece type identifier.
+     */
+	int getPieceType();
+	/**
+     * Returns the color of the piece (e.g., 0 for white, 1 for black).
+     *
+     * @return The piece color.
+     */
+	int getPieceColour(); 
+	
+	/**
+    * returns true when the selected piece is white.
+    *
+    * @return true if white.
+    */
+	default boolean isWhite() {	
+		return getPieceColour() == 0; 
+	}
 
-	long generateMove(int from, boolean isWhite, GameState previousGameState); //generate Pseudolegal Moves.
+	
+	/**
+     * Generates legal moves for the piece from the given position.
+     *
+     * @param from              The starting position of the piece.
+     * @param isWhite           Whether the piece is white.
+     * @param previousGameState The previous game state for move generation.
+     * @return A bitboard representing possible moves.
+     */
+	long generateMove(int from, boolean isWhite, GameState previousGameState);
 
 	//BB to see which squares are defended, and attacked. - Attack Mask
 	//implemented in every Class as to calc
 	//public static long generateSamePieceAttacks(boolean isWhite);
 
+	 /**
+     * Toggles the bitboard for the given square based on the piece color.
+     *
+     * @param from    The square to toggle.
+     * @param isWhite Whether the piece is white.
+     */
 	void toggleBB(int from, boolean isWhite); //basically remove or add.
 
 
-	default boolean isWhite() {	
-		return getPieceColour() == 0; 
-	}
-
+	/**
+     * Checks if a move from one square to another is valid for the piece.
+     *
+     * @param from              The starting square.
+     * @param to                The target square.
+     * @param previousGameState The previous game state for move validation.
+     * @return True if the move is valid, false otherwise.
+     */
 	default boolean isValidMove(int from, int to, GameState previousGameState) {
 		long mask = 1L << to;
 
@@ -44,26 +87,15 @@ public interface PieceI {
 			return false;
 		}
 	}
-
-	//Debugging
-	default void printMask(long bits) {
-		for (int rank = 7; rank >= 0; rank--) {
-			for (int file = 0; file < 8; file++) {
-				int square = rank * 8 + file;
-				long mask = 1L << square;
-
-				if ((bits & mask) != 0) {
-					System.out.print("M ");
-				} else {
-					System.out.print(". ");
-				}
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
-
-	//Add to Square centric Board and to bitboards.
+	
+	/**
+     * Adds a piece to the square-centric board and bitboards based on the provided values.
+     *
+     * @param pos          The position to add the piece.
+     * @param pieceType    The type of the piece.
+     * @param pieceColour  The color of the piece.
+     * @return The newly created chess piece.
+     */
 	static PieceI addPiece(int pos, int pieceType, int pieceColour) {
 
 		PieceI newPiece;
@@ -93,5 +125,32 @@ public interface PieceI {
 		}
 		return newPiece;
 	}
+
+	// ########################### Debugging
+	/**
+     * Debugging
+     * Prints the bitboard mask for debugging purposes.
+     *
+     * @param bits The bitboard mask to print.
+     */
+	default void printMask(long bits) {
+		for (int rank = 7; rank >= 0; rank--) {
+			for (int file = 0; file < 8; file++) {
+				int square = rank * 8 + file;
+				long mask = 1L << square;
+
+				if ((bits & mask) != 0) {
+					System.out.print("M ");
+				} else {
+					System.out.print(". ");
+				}
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+
+	
 
 }

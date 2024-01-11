@@ -1,24 +1,67 @@
+/**
+ * The BitBoardHelper class provides helper methods for working with bitboards.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration;
 
 import java.util.ArrayList;
 
-// Methods for interacting
- public class BitBoardHelper {
+
+public class BitBoardHelper {
+	/**
+	 * Bitmask for file A.
+	 */
 	public static final long fileA = 0x101010101010101L;
-
+	/**
+     * Bitmask for rank 1.
+     */
 	public static final long rank1 = 0b11111111L;
+	/**
+     * Bitmask for rank 2.
+     */
 	public static final long rank2 = rank1 << 8;
+	/**
+     * Bitmask for rank 3.
+     */
 	public static final long rank3 = rank2 << 8;
+	/**
+     * Bitmask for rank 4.
+     */
 	public static final long rank4 = rank3 << 8;
+	/**
+	 * Bitmask for rank 5.
+	 */
 	public static final long rank5 = rank4 << 8;
+	/**
+	 * Bitmask for rank 6.
+	 */
 	public static final long rank6 = rank5 << 8;
+	/**
+	 * Bitmask for rank 7.
+	 */
 	public static final long rank7 = rank6 << 8;
+	/**
+	 * Bitmask for rank 8.
+	 */
 	public static final long Rank8 = rank7 << 8;
-
+	/**
+     * Bitmask for not A file.
+     */
 	public static final long notAFile = ~fileA;
+	/**
+     * Bitmask for not H file.
+     */
 	public static final long notHFile = ~(fileA << 7);
 
-	// Get index of least significant set bit in given 64bit value. Also clears the bit to zero.
+	/**
+     * Gets the index of the least significant set bit in the given 64-bit value and clears the bit to zero.
+     *
+     * @param b The array containing the 64-bit value.
+     * @return The index of the least significant set bit.
+     */
 	public static int popLSB(long[] b) {
 		int i = Long.numberOfTrailingZeros(b[0]);
 		b[0] &= (b[0] - 1);
@@ -57,27 +100,39 @@ import java.util.ArrayList;
 		}
 	}
 	
+	/**
+     * Counts the number of set bits in the given bitboard.
+     *
+     * @param bitboard The bitboard to count set bits.
+     * @return The number of set bits.
+     */
 	public static int countSetBits(long bitboard) {
-        int count = 0;
+		int count = 0;
 
-        while (bitboard != 0) {
-            count += bitboard & 1;
-            bitboard >>>= 1;
-        }
+		while (bitboard != 0) {
+			count += bitboard & 1;
+			bitboard >>>= 1;
+		}
 
-        return count;
-    }
-	
+		return count;
+	}
+
+	/**
+     * Gets a list of all positions (indices of set bits) in the given bitboard.
+     *
+     * @param bitboard The bitboard to get positions from.
+     * @return ArrayList containing all positions.
+     */
 	public static ArrayList<Integer> getAllPos(long bitboard) {
-        ArrayList<Integer> posList = new ArrayList<>();
+		ArrayList<Integer> posList = new ArrayList<>();
 
-        while (bitboard != 0) {
-            int i = Long.numberOfTrailingZeros(bitboard);
-            bitboard &= (bitboard - 1);
-            posList.add(i);         
-            }
-        return posList;
-    }
+		while (bitboard != 0) {
+			int i = Long.numberOfTrailingZeros(bitboard);
+			bitboard &= (bitboard - 1);
+			posList.add(i);         
+		}
+		return posList;
+	}
 
 }
 

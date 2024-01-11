@@ -1,9 +1,21 @@
+/**
+ * Utility class for reading values from piece square tables.
+ */
+
 package game.search;
 
 import game.board.Board;
 
-public class PieceSquareTable {
+abstract class PieceSquareTable {
 
+	/**
+     * Reads the value from the piece square table for the given square and side.
+     *
+     * @param table    The piece square table to read from.
+     * @param square   The chessboard square (0-63) for which to retrieve the value.
+     * @param isWhite  Indicates whether the piece belongs to the white side.
+     * @return The value from the piece square table for the specified square and side.
+     */
 	public static int read(int[] table, int square, boolean isWhite) {
 		if (isWhite) {
 			//when white read from the bottom of the table

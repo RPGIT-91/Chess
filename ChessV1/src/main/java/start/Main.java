@@ -11,18 +11,20 @@ import gui.GUI;
 // Only valid chess moves are possible. 
 // In addition to the normal piece moves that includes: 
 // en Passant, en Passant when that when double pinned, not moving out of pins and castling, Checks, double Check, promotion to Queen.
-// Not yet variable pawn promotion.
-
+// Not yet, variable pawn promotion.
 
 
 // The pieces are initialized and displayed on the board. In a sense it functions like a traditional controller.
 // This board is returned. Given the BitBoard representation. The GUI also needs to take the shift into account. 
 // When a piece is moved, i.e.  "taken" from one square
 
-//
+
 //Methods to interact with board
 //from and to values are based on a bitboard -> 0-63
 //each value representing a different square on the board
+
+// A Search negaMax search with a quiescense Search and move ordering finds the best possible move for a given depth and position.
+// In the Interface the best move is displayed, as well as the number of searched nodes and the eval score.
 
 
 
@@ -47,6 +49,10 @@ public class Main{
 		
 		//Test Position
 //		board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+		
+		// End Game
+		
+		
 		
 		// Game Start
 		SwingUtilities.invokeLater(new Runnable() {

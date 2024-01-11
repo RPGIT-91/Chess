@@ -1,3 +1,12 @@
+/**
+ * The GUI class represents the graphical user interface for a chess game.
+ * It extends JFrame and provides a chessboard, side panel with buttons,
+ * and labels to display game information.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package gui;
 
 import javax.swing.*;
@@ -19,10 +28,20 @@ public class GUI extends JFrame {
 	private JPanel sidePanel;
 	public Board chessBoard;
 
+	/**
+     * Constructs a GUI object for a chess game.
+     *
+     * @param chessBoard The chessboard associated with the GUI.
+     */
 	public GUI(Board chessBoard) {
 		this.chessBoard = chessBoard;
 		initializeUI();
 	}
+	
+	/**
+     * Initializes the graphical user interface with the chessboard,
+     * side panel, buttons, and labels.
+     */
 	public void initializeUI() {
         int rows = 8;
         int cols = 8;
@@ -119,6 +138,15 @@ public class GUI extends JFrame {
 	private int selectedCol = -1;
 	private boolean selectingMode = true;
 
+	
+	/**
+     * Handles the click event on a chessboard panel. Manages piece selection
+     * and move execution based on user input.
+     *
+     * @param row The row index of the clicked panel.
+     * @param col The column index of the clicked panel.
+     * @param evt The mouse event associated with the click.
+     */
 	private void handlePanelClick(int row, int col, java.awt.event.MouseEvent evt) {
 		if (selectingMode) {
 			// First click - highlight possible moves
@@ -151,7 +179,11 @@ public class GUI extends JFrame {
 		}
 	}
 
-
+	/**
+     * Displays the valid moves on the chessboard panels with different colors.
+     *
+     * @param validMovesBitboard The bitboard representing valid moves.
+     */
 	private void showValidMoves(long validMovesBitboard) {
 		SwingUtilities.invokeLater(() -> {
 			for (int rank = 7; rank >= 0; rank--) {
@@ -177,11 +209,17 @@ public class GUI extends JFrame {
 		});
 	}
 
+	/**
+     * Resets the selection of a chessboard panel.
+     */
 	private void resetSelection() {
 		selectedRow = -1;
 		selectedCol = -1;
 	}
 
+	/**
+     * Updates the graphical representation of the chessboard.
+     */
 	public void updateBoard() {
 		PieceI[] boardArray = chessBoard.square;
 
@@ -218,6 +256,10 @@ public class GUI extends JFrame {
 		
 	}
 	
+	/**
+     * Updates the side panel with information about moves calculated,
+     * current evaluation, and the best move.
+     */
 	private void updateSidePanel() {
 		Component[] components = sidePanel.getComponents();
 		Searcher searcher = new Searcher();
@@ -252,7 +294,15 @@ public class GUI extends JFrame {
 		}
 	}
 
-	//Helper
+	// ### Helper
+	
+	/**
+     * Represents the inverse mapping of the row index from the chessboard
+     * to the corresponding row index in the bitboard representation.
+     *
+     * @param row The row index from the chessboard.
+     * @return The corresponding row index in the bitboard representation.
+     */
 	private static int inverseRowAndCol(int row) {
 		int bbRow = 0;
 		switch (row) {
@@ -284,6 +334,13 @@ public class GUI extends JFrame {
 		return bbRow;
 	}
 
+	/**
+     * Converts row and column indices to the bitboard position.
+     *
+     * @param row The row index of the chessboard.
+     * @param col The column index of the chessboard.
+     * @return The bitboard position corresponding to the row and column indices.
+     */
 	private static int toBBSquare(int row, int col) {
 		int bbPos = inverseRowAndCol(row) * 8 + col;
 		return bbPos;

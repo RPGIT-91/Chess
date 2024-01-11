@@ -1,3 +1,11 @@
+/**
+ * Class responsible for searching the game tree and finding the best move.
+ * 
+ * Implementation of a negamax search with alpha-beta pruning and quiescence search.
+ * 
+ * 
+ */
+
 package game.search;
 
 import java.util.ArrayList;
@@ -23,7 +31,12 @@ public class Searcher {
 	public int bestEvalDepth2;
 	public int startingDepth;
 
-
+	/**
+     * Calculates the best move for the given board position and search depth.
+     *
+     * @param board The current game board.
+     * @param depth The search depth.
+     */
 	public void calcBestMove(Board board, int depth) {
 		startingDepth = depth;
 
@@ -39,7 +52,16 @@ public class Searcher {
 	}
 
 
-	//maximizing player starts as true and is switched after every move as to minimize the opponents score
+	/**
+     * Starts the search algorithm recursively to find the best move.
+     *
+     * @param board            The current game board.
+     * @param depth            The search depth.
+     * @param alpha            The alpha value for alpha-beta pruning.
+     * @param beta             The beta value for alpha-beta pruning.
+     * @param maximizingPlayer Indicates whether the player is maximizing or minimizing, relevant for pruning in quiescence Search
+     * @return The evaluation score of the position.
+     */
 	private int startSearch(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
 		if (depth == 0) {
 			int counter = 0;
@@ -84,6 +106,17 @@ public class Searcher {
 		return alpha;
 
 	}
+	
+	/**
+     * Performs the quiescence search to handle captures and dynamic evaluation.
+     *
+     * @param board            The current game board.
+     * @param alpha            The alpha value for alpha-beta pruning.
+     * @param beta             The beta value for alpha-beta pruning.
+     * @param counter          The counter to limit the quiescence search depth.
+     * @param maximizingPlayer Indicates whether the player is maximizing or minimizing.
+     * @return The evaluation score of the position.
+     */
 	private int quiescenceSearch(Board board, int alpha, int beta, int counter, boolean maximizingPlayer) {
 
 		// captures aren't forced, so see what the evaluation is without captures
@@ -177,7 +210,12 @@ public class Searcher {
 		return alpha;
 	}
 
-	//only generate for colour to move
+	/**
+     * Generates all possible moves for the current side to move.
+     *
+     * @param board The current game board.
+     * @return A list of all possible moves.
+     */
 	private static List<Move> generateMoves(Board board) {
 		PieceI[] currentBoard = board.square;
 		List<Move> moves = new ArrayList<>();
@@ -208,6 +246,15 @@ public class Searcher {
 		return moves;
 	}
 	
+	/**
+     * Provides debug information for better understanding of the search process.
+     *
+     * @param depth      The current search depth.
+     * @param move       The move being considered.
+     * @param alpha      The alpha value.
+     * @param beta       The beta value.
+     * @param evaluation The evaluation score.
+     */
 	private void debugInfo(int depth, Move move, int alpha, int beta, int evaluation) {
 		if (depth == 3) {
 			System.out.println("Depth 3: " + Board.translateBBToSquare(move.getFrom()) + "-" + Board.translateBBToSquare(move.getTo()) + ",  bestMove: " +  Board.translateBBToSquare(bestMoveSoFar.getFrom()) + "-" + Board.translateBBToSquare(bestMoveSoFar.getTo())+",     alpha: " + alpha  + ",     beta: " + beta + ",    current eval: " + evaluation);
@@ -228,7 +275,12 @@ public class Searcher {
 		}
 	}
 	
-	
+	/**
+     * Generates all possible capturing moves for the current side to move.
+     *
+     * @param board The current game board.
+     * @return A list of all capturing moves.
+     */
 	private static List<Move> generateCaptureMoves(Board board){
 		List<Move> captureMoves = generateMoves(board);
 

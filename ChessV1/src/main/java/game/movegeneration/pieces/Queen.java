@@ -1,3 +1,10 @@
+/**
+ * The Queen class represents the Queen chess piece and implements the PieceI interface.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration.pieces;
 
 import java.util.List;
@@ -6,16 +13,30 @@ import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class Queen implements PieceI {
+	/**
+	 * Bitboard representing queen attacks.
+	 */
 	public static long queenAttacks;
 
 	private final int pieceType = 5;
 	private final int pieceColour; // 0 for white, 1 for black
 
-	static int[] bishopMoves = {-9, -7, 7, 9};
-	static int[] rookMoves = {-8, -1, 1, 8};
+	/**
+	 * Array representing bishop moves for move generation.
+	 */
+	static final int[] bishopMoves = {-9, -7, 7, 9};
+	/**
+	 * Array representing rook moves for move generation.
+	 */
+	static final int[] rookMoves = {-8, -1, 1, 8};
 
 
-	//Constructor
+	/**
+	 * Constructor for the Queen class.
+	 *
+	 * @param pieceColour The color of the queen (0 for white, 1 for black).
+	 * @param pos         The initial position of the queen.
+	 */
 	public Queen(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -105,11 +126,18 @@ public class Queen implements PieceI {
 			//Remove options when pinned
 			possibleMoves &= BitBoards.checkOrthogonalPin(from, isWhite);
 			possibleMoves &= BitBoards.checkDiagonalPin(from, isWhite);
-			
+
 		}
 		return possibleMoves;
 	}
 
+	/**
+	 * Generates attacks for the queen of the same color on the board.
+	 * Uses BitBoards to retrieve additional Piece Information and as such is static
+	 *
+	 * @param isWhite Whether the queen is white.
+	 * @return Bitboard representing possible attacks.
+	 */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		long possibleMoves = 0L;
 
@@ -195,24 +223,6 @@ public class Queen implements PieceI {
 		} else {
 			BitBoards.blackBB ^= 1L << square;
 		}
-	}
-
-
-	public static void printMaskInt(long bits) {
-		for (int rank = 7; rank >= 0; rank--) {
-			for (int file = 0; file < 8; file++) {
-				int square = rank * 8 + file;
-				long mask = 1L << square;
-
-				if ((bits & mask) != 0) {
-					System.out.print("M ");
-				} else {
-					System.out.print(". ");
-				}
-			}
-			System.out.println();
-		}
-		System.out.println();
 	}
 
 }

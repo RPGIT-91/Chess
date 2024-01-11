@@ -1,3 +1,10 @@
+/**
+ * The Bishop class represents the Bishop chess piece and implements the PieceI interface.
+ * 
+ * @author Ryu
+ * @version 1.0
+ */
+
 package game.movegeneration.pieces;
 
 import java.util.List;
@@ -6,14 +13,26 @@ import game.board.GameState;
 import game.movegeneration.BitBoards;
 
 public class Bishop implements PieceI {
+    /**
+     * Bitboard representing bishop attacks.
+     */
 	public static long bishopAttacks;
 
 	private final int pieceType = 3;
 	private final int pieceColour; // 0 for white, 1 for black
 
+	/**
+     * Array representing bishop moves for move generation.
+     */
 	private static int[] bishopMoves = {-9, -7, 7, 9};
 
-	//Constructor
+	
+	/**
+     * Constructor for the Bishop class.
+     *
+     * @param pieceColour The color of the bishop (0 for white, 1 for black).
+     * @param pos         The initial position of the bishop.
+     */
 	public Bishop(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -79,6 +98,13 @@ public class Bishop implements PieceI {
 	}
 
 
+	/**
+     * Generates attacks for the bishop of the same color on the board.
+     * Uses BitBoards to retrieve additional Piece Information and as such is static.
+     * 
+     * @param isWhite Whether the bishop is white.
+     * @return Bitboard representing possible attacks.
+     */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		long possibleMoves = 0L;
 
