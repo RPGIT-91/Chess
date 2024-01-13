@@ -62,8 +62,8 @@ public class Evaluation {
 		whiteMaterial = new MaterialInfo(true);
 		blackMaterial = new MaterialInfo(false);
 		
-		mopUpWhite = MopUpEval(true, whiteMaterial.Sum(), blackMaterial.Sum(), whiteMaterial.endgameT);
-		mopUpBlack = MopUpEval(false, blackMaterial.Sum(), whiteMaterial.Sum(), blackMaterial.endgameT);
+		mopUpWhite = mopUpEval(true, whiteMaterial.Sum(), blackMaterial.Sum(), whiteMaterial.endgameT);
+		mopUpBlack = mopUpEval(false, blackMaterial.Sum(), whiteMaterial.Sum(), blackMaterial.endgameT);
 
 	}
 	
@@ -76,7 +76,7 @@ public class Evaluation {
      * @param endgameWeight     Weight factor for the endgame.
      * @return The mop-up score for the given conditions.
      */
-	public int MopUpEval(boolean isWhite, int myMaterial, int opponentMaterial, float endgameWeight) {
+	public int mopUpEval(boolean isWhite, int myMaterial, int opponentMaterial, float endgameWeight) {
         int mopUpScore = 0;
 
         if (myMaterial > opponentMaterial + MaterialInfo.PawnValue * 2 && endgameWeight > 0) {
@@ -121,7 +121,7 @@ public class Evaluation {
      * @param isWhite Indicates whether the side being evaluated is white.
      * @return The evaluation score for the current position from the perspective of the side being evaluated.
      */
-	public int Evaluate(boolean isWhite) {
+	public int evaluate(boolean isWhite) {
 		int perspective = isWhite ? 1 : -1;
 		
 		// Material Score

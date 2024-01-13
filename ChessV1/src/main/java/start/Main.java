@@ -47,11 +47,12 @@ public class Main{
 //		board.loadFENBoard("k4R2/1p4R1/8/8/8/5p2/1Q3q2/K7 b - - 0 1");
 		
 		
+		
 		//Test Position
 //		board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
 		
 		// End Game
-		
+//		board.loadFENBoard("8/8/8/4k3/8/8/8/K1R5 w - - 0 1");
 		
 		
 		// Game Start

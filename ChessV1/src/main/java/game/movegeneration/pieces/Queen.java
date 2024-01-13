@@ -9,7 +9,7 @@ import game.movegeneration.BitBoards;
  * The Queen class represents the Queen chess piece and implements the PieceI interface.
  * 
  * @see game.movegeneration.BitBoards
- * @see game.movegeneration.PieceI
+ * @see game.movegeneration.pieces.PieceI
  * 
  * @author Ryu
  * @version 1.0

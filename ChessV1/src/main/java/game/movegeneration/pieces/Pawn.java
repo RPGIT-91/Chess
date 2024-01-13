@@ -7,7 +7,7 @@ import game.board.GameState;
  * The Pawn class represents the Pawn chess piece and implements the PieceI interface.
  * 
  * @see game.movegeneration.BitBoards
- * @see game.movegeneration.PieceI
+ * @see game.movegeneration.pieces.PieceI
  * 
  * @author Ryu
  * @version 1.0
@@ -15,19 +15,19 @@ import game.board.GameState;
 
 public class Pawn implements PieceI {
 	/**
-     * Bitboard representing pawn attacks.
-     */
+	 * Bitboard representing pawn attacks.
+	 */
 	public static long pawnAttacks;
 
 	private final int pieceType = 1; // Unique identifier for Pawn
 	private final int pieceColour; // 0 for white, 1 for black
 
 	/**
-     * Constructor for the Pawn class.
-     *
-     * @param pieceColour The color of the pawn (0 for white, 1 for black).
-     * @param pos         The initial position of the pawn.
-     */
+	 * Constructor for the Pawn class.
+	 *
+	 * @param pieceColour The color of the pawn (0 for white, 1 for black).
+	 * @param pos         The initial position of the pawn.
+	 */
 	public Pawn(int pieceColour, int pos) {
 		this.pieceColour = pieceColour;
 
@@ -73,20 +73,19 @@ public class Pawn implements PieceI {
 			} else {
 				//Black Pawn moves
 				long singleMove = bitboard >> 8;
-						if ((singleMove & BitBoards.allBB) == 0) {
-							possibleMoves |= singleMove;
+				if ((singleMove & BitBoards.allBB) == 0) {
+					possibleMoves |= singleMove;
 
-							//double Move if not blocked and rank7
-							if ((bitboard & rank7) != 0) {
-								long doubleMove = bitboard >> 16;
-
-				if ((doubleMove & BitBoards.allBB) == 0) {
-					possibleMoves |= doubleMove;
-				}
-							}
+					//double Move if not blocked and rank7
+					if ((bitboard & rank7) != 0) {
+						long doubleMove = bitboard >> 16;
+						if ((doubleMove & BitBoards.allBB) == 0) {
+							possibleMoves |= doubleMove;
 						}
-						//diagonal captures
-						possibleMoves |= (caps & BitBoards.whiteBB);
+					}
+				}
+				//diagonal captures
+				possibleMoves |= (caps & BitBoards.whiteBB);
 			}
 
 			// include enPassant captures,
@@ -95,7 +94,7 @@ public class Pawn implements PieceI {
 			long vertical = (0x0101010101010101L << (previousGameState.getEnPassantFile() % 8) & ~(1L << previousGameState.getEnPassantFile()));
 			//long vertical = (0x0101010101010101L << (-1 % 8) & ~(1L << -1));
 			
-			
+
 			vertical &= (rank3 | rank6);
 			if((vertical & caps) != 0) {
 				//Remove en passant capture when that would result in a check
@@ -117,23 +116,23 @@ public class Pawn implements PieceI {
 			//Remove options when pinned
 			possibleMoves &= BitBoards.checkOrthogonalPin(from, isWhite);
 			possibleMoves &= BitBoards.checkDiagonalPin(from, isWhite);
-			
-			
+
+
 		}
 
 		return possibleMoves;
 
 	}
-	
-	
 
-	 /**
-     * Generates attacks for the pawn of the same color on the board.
-     * Uses BitBoards to retrieve additional Piece Information and as such is static
-     *
-     * @param isWhite Whether the pawn is white.
-     * @return Bitboard representing possible attacks.
-     */
+
+
+	/**
+	 * Generates attacks for the pawn of the same color on the board.
+	 * Uses BitBoards to retrieve additional Piece Information and as such is static
+	 *
+	 * @param isWhite Whether the pawn is white.
+	 * @return Bitboard representing possible attacks.
+	 */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		if (isWhite) {
 			pawnAttacks = ((BitBoards.whitePawnsBB << 9) & notAFile) | ((BitBoards.whitePawnsBB << 7) & notHFile);
@@ -158,12 +157,12 @@ public class Pawn implements PieceI {
 	}
 
 	/**
-     * Helper method to calculate pawn attacks.
-     *
-     * @param pawnBitboard The bitboard representing the pawn.
-     * @param isWhite      Whether the pawn is white.
-     * @return Bitboard representing pawn attacks.
-     */
+	 * Helper method to calculate pawn attacks.
+	 *
+	 * @param pawnBitboard The bitboard representing the pawn.
+	 * @param isWhite      Whether the pawn is white.
+	 * @return Bitboard representing pawn attacks.
+	 */
 	private static long pawnAttacks(long pawnBitboard, boolean isWhite) {
 		if (isWhite) {
 			return ((pawnBitboard << 9) & notAFile) | ((pawnBitboard << 7) & notHFile);

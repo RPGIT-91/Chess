@@ -128,7 +128,7 @@ public class Searcher {
 		movesCalculated++;
 
 		Evaluation eval = new Evaluation(board);
-		int evaluation = eval.Evaluate(board.gameStateStack.peek().getIsWhiteToMove());
+		int evaluation = eval.evaluate(board.gameStateStack.peek().getIsWhiteToMove());
 
 
 		//not working as intended
