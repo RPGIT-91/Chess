@@ -123,7 +123,7 @@ public class GUI extends JFrame {
 		button3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				chessBoard.restartGame();
+				chessBoard.loadStartPosition();
 				updateBoard();
 			}
 		});

@@ -1,5 +1,8 @@
 package game.board;
 
+import java.util.Arrays;
+
+import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.PieceI;
 
 /**
@@ -126,6 +129,126 @@ public class FEN {
 		return fen.toString();
 	}
 
+	
+	/**
+	 * Loads a chess board position from a Forsyth-Edwards Notation (FEN) string.
+	 *
+	 * @param fen         The FEN string representing the board position.
+	 * @param newGame     Flag indicating whether to clear the game state stack and FEN stack for a new game.
+	 * @param pushToStack Flag indicating whether to push the FEN string onto the FEN stack.
+	 */
+	public static void loadPositionFromFEN(Board board,String fen, boolean newGame, boolean pushToStack) {
+
+		//clear BitBoards.
+		Arrays.fill(board.square, null);
+		BitBoards.allBB = 0L;
+		BitBoards.clear(1);
+
+		if (newGame) {
+			board.gameStateStack.clear();
+			board.fenStack.clear();
+			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
+			board.saveGameState(initialGameState);
+		} 
+
+
+		String[] sections = fen.split(" ");
+
+		int file = 0;
+		int rank = 7;
+
+		for (char symbol : sections[0].toCharArray()) {
+			if (symbol == '/') {
+				file = 0;
+				rank--;
+			} else {
+				if (Character.isDigit(symbol)) {
+					file += Character.getNumericValue(symbol);
+				} else {
+					int pieceColour = (Character.isUpperCase(symbol)) ? 0 : 1;
+					int pieceType;
+
+					switch (Character.toLowerCase(symbol)) {
+					case 'p':
+						pieceType = 1;
+						break;
+					case 'n':
+						pieceType = 2;
+						break;
+					case 'b':
+						pieceType = 3;
+						break;
+					case 'r':
+						pieceType = 4;
+						break;
+					case 'q':
+						pieceType = 5;				
+						break;
+					case 'k':
+						pieceType = 6;
+						break;		
+					default:
+						pieceType = 0;
+						break;
+					}
+
+					board.addPiece(rank * 8 + file, pieceType, pieceColour);
+					file++;
+				}
+			}
+		}
+		try {
+			board.gameStateStack.peek().setWhiteToMove(sections[1].equals("w"));
+
+			String castlingRights = sections[2];
+			board.gameStateStack.peek().setwKingSideCastle(castlingRights.contains("K"));
+			board.gameStateStack.peek().setwQueenSideCastle(castlingRights.contains("Q"));
+			board.gameStateStack.peek().setbKingSideCastle(castlingRights.contains("k"));
+			board.gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
+
+			// Default values
+			int epFile = -1;
+			int fiftyMoveCounter = 0;
+			int moveCounter = 0;
+
+			if (sections.length > 3) {
+				String enPassantFileName = String.valueOf(sections[3].charAt(0));
+				if (FEN.fileNames.contains(enPassantFileName)) {
+					epFile = FEN.fileNames.indexOf(enPassantFileName);			
+				}
+			}
+
+			// Half-move clock
+			if (sections.length > 4) {
+				fiftyMoveCounter = Integer.parseInt(sections[4]);
+			}
+			// Full move number
+			if (sections.length > 5) {
+				moveCounter = Integer.parseInt(sections[5]);
+			}
+
+			// plyCounter if black to move +1
+			int inc = 0;
+			if (!board.gameStateStack.peek().getIsWhiteToMove()) {
+				inc = 1;
+			}
+			board.gameStateStack.peek().setPlyCounter((moveCounter * 2) - 2 + inc);
+
+			board.gameStateStack.peek().setEnPassantFile(epFile);
+			board.gameStateStack.peek().setFiftyMoveCounter(fiftyMoveCounter);
+			board.gameStateStack.peek().setMoveCounter(moveCounter);
+
+			if (pushToStack) {
+				board.pushToFENStack(fen);
+			}
+
+		} catch (ArrayIndexOutOfBoundsException e){
+			System.err.println("Error: Array index out of bounds. " + e.getMessage());
+		}
+
+
+
+	}
 	/**
      * Converts the given file index and rank index to a square name in FEN format.
      *

@@ -1,6 +1,5 @@
 package game.board;
 
-import java.util.Arrays;
 import java.util.Stack;
 import java.io.*;
 
@@ -43,8 +42,6 @@ public class Board {
 	// # Side to move info
 	public Stack<GameState> gameStateStack;
 	public Stack<String> fenStack;
-	public int moveCounter;
-	public int plyCounter;
 
 	//constructor
 	public Board() {
@@ -93,8 +90,7 @@ public class Board {
 
 		GameState previousGameState = gameStateStack.peek();
 		boolean isWhiteToMove = previousGameState.getIsWhiteToMove(); //Swtich move order.
-		plyCounter = previousGameState.getPlyCounter();
-		moveCounter = previousGameState.getMoveCounter();
+		int plyCounter = previousGameState.getPlyCounter();
 
 		if (pieceToMove != null) {
 			if (pieceToMove.isWhite() == isWhiteToMove) {
@@ -304,7 +300,7 @@ public class Board {
 	 */
 	public void loadFENBoard(String fen) {
 		//No check for if valid fen.
-		LoadPositionFromFEN(fen, true, true);
+		FEN.loadPositionFromFEN(this, fen, false, true);
 	}
 
 	/**
@@ -316,7 +312,7 @@ public class Board {
 
 		//pop fen from stack and load 
 		fenStack.pop();
-		LoadPositionFromFEN(fenStack.peek(), false, false);
+		FEN.loadPositionFromFEN(this, fenStack.peek(), false, false);
 
 	}
 
@@ -326,11 +322,84 @@ public class Board {
 	 * The method internally calls {@code LoadPositionFromFEN} with the FEN string
 	 * representing the standard starting position.
 	 */
-	private void loadStartPosition() {
-		LoadPositionFromFEN(FEN.START_POSITION_FEN, true, true);		
+	public void loadStartPosition() {
+		FEN.loadPositionFromFEN(this, FEN.START_POSITION_FEN, true, true);		
 	}
 
+	
+	
+	
+	
+	
 	// # Helper
+	/**
+	 * Saves the current game state by pushing it onto the game state stack.
+	 *
+	 * @param currentGameState The current game state to be saved.
+	 */
+	protected void saveGameState(GameState currentGameState) {
+		// Save the current game state by pushing it onto the stack
+		gameStateStack.push(currentGameState);
+	}
+
+	//for eval.
+	/**
+	 * Restores the previous game state by popping from the game state stack.
+	 *
+	 * @return The restored previous game state, or {@code null} if the stack is empty.
+	 */
+	private GameState restorePreviousState() {
+		// Restore the previous game state by popping from the stack
+		if (!gameStateStack.isEmpty()) {
+			return gameStateStack.pop();
+		} else {
+			// Stack is empty, no previous state to restore
+			return null;
+		}
+	}
+
+	/**
+	 * Pushes the given FEN string onto the FEN stack.
+	 *
+	 * @param fen The FEN string to be pushed onto the stack.
+	 */
+	protected void pushToFENStack(String fen) {
+		fenStack.push(fen);
+		//System.out.println(fen);
+	}
+	
+	/**
+	 * Saves the current game state to a file named "SavedGame.txt" in the project directory.
+	 * The method writes the FEN string of the current game state to the file.
+	 * Displays a success message if the save is successful, otherwise prints an error message.
+	 */
+	public void saveGame() {
+		try {
+			// Get the project directory
+			String projectDirectory = System.getProperty("user.dir");
+
+			// Create a File object for the SavedGame.txt file in the project directory
+			File savedGameFile = new File(projectDirectory, "SavedGame.txt");
+
+			// If the file doesn't exist, create it
+			if (!savedGameFile.exists()) {
+				savedGameFile.createNewFile();
+			}
+
+			// Write the value from fenStack.peek() into the file
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(savedGameFile))) {
+				String fenValue = fenStack.peek(); // Assuming fenStack is a Stack<String>
+				writer.write(fenValue);
+				System.out.println("Game saved successfully.");
+			} catch (IOException e) {
+				System.err.println("Error writing to file: " + e.getMessage());
+			}
+
+		} catch (IOException e) {
+			System.err.println("Error creating file: " + e.getMessage());
+		}
+	}
+	
 	/**
 	 * Inverts the position info. A standard 2D Array is nubered 0-63 but from top to botom unlike the BitBoard which is numbered bottom to top.
 	 *
@@ -369,198 +438,6 @@ public class Board {
 		}
 		bbPos = bbPos + pos % 8;
 		return bbPos;
-	}
-
-	/**
-	 * Saves the current game state by pushing it onto the game state stack.
-	 *
-	 * @param currentGameState The current game state to be saved.
-	 */
-	private void saveGameState(GameState currentGameState) {
-		// Save the current game state by pushing it onto the stack
-		gameStateStack.push(currentGameState);
-	}
-
-	//for eval.
-	/**
-	 * Restores the previous game state by popping from the game state stack.
-	 *
-	 * @return The restored previous game state, or {@code null} if the stack is empty.
-	 */
-	private GameState restorePreviousState() {
-		// Restore the previous game state by popping from the stack
-		if (!gameStateStack.isEmpty()) {
-			return gameStateStack.pop();
-		} else {
-			// Stack is empty, no previous state to restore
-			return null;
-		}
-	}
-
-	/**
-	 * Saves the current game state to a file named "SavedGame.txt" in the project directory.
-	 * The method writes the FEN string of the current game state to the file.
-	 * Displays a success message if the save is successful, otherwise prints an error message.
-	 */
-	public void saveGame() {
-		try {
-			// Get the project directory
-			String projectDirectory = System.getProperty("user.dir");
-
-			// Create a File object for the SavedGame.txt file in the project directory
-			File savedGameFile = new File(projectDirectory, "SavedGame.txt");
-
-			// If the file doesn't exist, create it
-			if (!savedGameFile.exists()) {
-				savedGameFile.createNewFile();
-			}
-
-			// Write the value from fenStack.peek() into the file
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(savedGameFile))) {
-				String fenValue = fenStack.peek(); // Assuming fenStack is a Stack<String>
-				writer.write(fenValue);
-				System.out.println("Game saved successfully.");
-			} catch (IOException e) {
-				System.err.println("Error writing to file: " + e.getMessage());
-			}
-
-		} catch (IOException e) {
-			System.err.println("Error creating file: " + e.getMessage());
-		}
-	}
-
-	public void restartGame() {
-		LoadPositionFromFEN(FEN.START_POSITION_FEN, true, true);
-	}
-
-	/**
-	 * Loads a chess board position from a Forsyth-Edwards Notation (FEN) string.
-	 *
-	 * @param fen         The FEN string representing the board position.
-	 * @param newGame     Flag indicating whether to clear the game state stack and FEN stack for a new game.
-	 * @param pushToStack Flag indicating whether to push the FEN string onto the FEN stack.
-	 */
-	private void LoadPositionFromFEN(String fen, boolean newGame, boolean pushToStack) {
-
-		//clear BitBoards.
-		Arrays.fill(square, null);
-		BitBoards.allBB = 0L;
-		BitBoards.clear(1);
-
-		if (newGame) {
-			gameStateStack.clear();
-			fenStack.clear();
-			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
-			saveGameState(initialGameState);
-		} 
-
-
-		String[] sections = fen.split(" ");
-
-		int file = 0;
-		int rank = 7;
-
-		for (char symbol : sections[0].toCharArray()) {
-			if (symbol == '/') {
-				file = 0;
-				rank--;
-			} else {
-				if (Character.isDigit(symbol)) {
-					file += Character.getNumericValue(symbol);
-				} else {
-					int pieceColour = (Character.isUpperCase(symbol)) ? 0 : 1;
-					int pieceType;
-
-					switch (Character.toLowerCase(symbol)) {
-					case 'p':
-						pieceType = 1;
-						break;
-					case 'n':
-						pieceType = 2;
-						break;
-					case 'b':
-						pieceType = 3;
-						break;
-					case 'r':
-						pieceType = 4;
-						break;
-					case 'q':
-						pieceType = 5;				
-						break;
-					case 'k':
-						pieceType = 6;
-						break;		
-					default:
-						pieceType = 0;
-						break;
-					}
-
-					addPiece(rank * 8 + file, pieceType, pieceColour);
-					file++;
-				}
-			}
-		}
-		try {
-			gameStateStack.peek().setWhiteToMove(sections[1].equals("w"));
-
-			String castlingRights = sections[2];
-			gameStateStack.peek().setwKingSideCastle(castlingRights.contains("K"));
-			gameStateStack.peek().setwQueenSideCastle(castlingRights.contains("Q"));
-			gameStateStack.peek().setbKingSideCastle(castlingRights.contains("k"));
-			gameStateStack.peek().setbQueenSideCastle(castlingRights.contains("q"));
-
-			// Default values
-			int epFile = -1;
-			int fiftyMoveCounter = 0;
-			int moveCounter = 0;
-
-			if (sections.length > 3) {
-				String enPassantFileName = String.valueOf(sections[3].charAt(0));
-				if (FEN.fileNames.contains(enPassantFileName)) {
-					epFile = FEN.fileNames.indexOf(enPassantFileName);			
-				}
-			}
-
-			// Half-move clock
-			if (sections.length > 4) {
-				fiftyMoveCounter = Integer.parseInt(sections[4]);
-			}
-			// Full move number
-			if (sections.length > 5) {
-				moveCounter = Integer.parseInt(sections[5]);
-			}
-
-			// plyCounter if black to move +1
-			int inc = 0;
-			if (!gameStateStack.peek().getIsWhiteToMove()) {
-				inc = 1;
-			}
-			gameStateStack.peek().setPlyCounter((moveCounter * 2) - 2 + inc);
-
-			gameStateStack.peek().setEnPassantFile(epFile);
-			gameStateStack.peek().setFiftyMoveCounter(fiftyMoveCounter);
-			gameStateStack.peek().setMoveCounter(moveCounter);
-
-			if (pushToStack) {
-				pushToFENStack(fen);
-			}
-
-		} catch (ArrayIndexOutOfBoundsException e){
-			System.err.println("Error: Array index out of bounds. " + e.getMessage());
-		}
-
-
-
-	}
-
-	/**
-	 * Pushes the given FEN string onto the FEN stack.
-	 *
-	 * @param fen The FEN string to be pushed onto the stack.
-	 */
-	private void pushToFENStack(String fen) {
-		fenStack.push(fen);
-		//System.out.println(fen);
 	}
 
 	/**
