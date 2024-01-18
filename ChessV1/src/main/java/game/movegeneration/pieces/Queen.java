@@ -2,6 +2,7 @@ package game.movegeneration.pieces;
 
 import java.util.List;
 
+import game.board.Board;
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 
@@ -45,10 +46,13 @@ public class Queen implements PieceI {
 		long position = 1L << from;
 		long possibleMoves = 0L;
 
+		System.out.println("Starting debug");
 		if (BitBoards.doubleCheck(isWhite)) {
+			
 			possibleMoves |= BitBoards.generateDiagonalSlider(position, isWhite, possibleMoves, false);
 			possibleMoves |= BitBoards.generateOrthogonalSlider(position, isWhite, possibleMoves, false);
 			
+			Board.printBitBoard(possibleMoves, false);
 			
 			//Remove options when king in check
 			long checkedMask = BitBoards.singleCheck(isWhite);

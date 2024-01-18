@@ -275,7 +275,9 @@ public class BitBoards extends BitBoardHelper{
 		if ((kingSquare & enemyQueens) != 0) {
 			checks += 1;
 		}
-		return (checks < 1);
+		System.out.println("number of checks" + checks);
+		System.out.println(checks<2);
+		return (checks < 2);
 	}
 
 	/**
