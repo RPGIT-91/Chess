@@ -429,6 +429,10 @@ public class Board {
 		}
 	}
 
+	public void restartGame() {
+		LoadPositionFromFEN(FEN.START_POSITION_FEN, true, true);
+	}
+
 	/**
 	 * Loads a chess board position from a Forsyth-Edwards Notation (FEN) string.
 	 *
@@ -437,17 +441,18 @@ public class Board {
 	 * @param pushToStack Flag indicating whether to push the FEN string onto the FEN stack.
 	 */
 	private void LoadPositionFromFEN(String fen, boolean newGame, boolean pushToStack) {
-		if (newGame) {
-			gameStateStack.clear();
-			fenStack.clear();
-			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
-			saveGameState(initialGameState);
-		}
 
 		//clear BitBoards.
 		Arrays.fill(square, null);
 		BitBoards.allBB = 0L;
 		BitBoards.clear(1);
+
+		if (newGame) {
+			gameStateStack.clear();
+			fenStack.clear();
+			GameState initialGameState = new GameState(0, 0, 0, true, true, true, true);
+			saveGameState(initialGameState);
+		} 
 
 
 		String[] sections = fen.split(" ");
@@ -545,6 +550,7 @@ public class Board {
 		}
 
 
+
 	}
 
 	/**
@@ -569,6 +575,16 @@ public class Board {
 
 		return FEN.fileNames.charAt(file) + "" + (rank + 1);
 	}
+
+
+
+
+
+
+
+
+
+
 
 
 	// ################ debugging helper.
@@ -672,50 +688,50 @@ public class Board {
 		System.out.println("BLACK");
 		printBitBoard(BitBoards.blackBB, enableIndex);
 
-		//		System.out.println("-------- Attack Masks --------");
-		//		System.out.println();
-		//		System.out.println("W - ATTACK");
-		//		printBitBoard(BitBoards.whiteAM, enableIndex);
-		//		System.out.println("B - ATTACK");
-		//		printBitBoard(BitBoards.blackAM, enableIndex);
-		//		printBitBoard(BitBoards.blackPawnsAM, enableIndex);
-		//		printBitBoard(BitBoards.blackRooksAM, enableIndex);
-		//		printBitBoard(BitBoards.blackKnightsAM, enableIndex);
-		//		printBitBoard(BitBoards.blackBishopsAM, enableIndex);
-		//		printBitBoard(BitBoards.blackQueensAM, enableIndex);
-		//		printBitBoard(BitBoards.blackKingAM, enableIndex);
+		System.out.println("-------- Attack Masks --------");
+		System.out.println();
+		System.out.println("W - ATTACK");
+		printBitBoard(BitBoards.whiteAM, enableIndex);
+		System.out.println("B - ATTACK");
+		printBitBoard(BitBoards.blackAM, enableIndex);
+		printBitBoard(BitBoards.blackPawnsAM, enableIndex);
+		printBitBoard(BitBoards.blackRooksAM, enableIndex);
+		printBitBoard(BitBoards.blackKnightsAM, enableIndex);
+		printBitBoard(BitBoards.blackBishopsAM, enableIndex);
+		printBitBoard(BitBoards.blackQueensAM, enableIndex);
+		printBitBoard(BitBoards.blackKingAM, enableIndex);
 
 		System.out.println("-------------------------------");
 		System.out.println();
 
 		System.out.println("W - PAWN");
 		printBitBoard(BitBoards.whitePawnsBB, enableIndex);
-		//		System.out.println("W - KNIGHT");
-		//		printBitBoard(BitBoards.whiteKnightsBB, enableIndex);
-		//		System.out.println("W - BISHOP");
-		//		printBitBoard(BitBoards.whiteBishopsBB, enableIndex);
-		//		System.out.println("W - ROOK");
-		//		printBitBoard(BitBoards.whiteRooksBB, enableIndex);
+		System.out.println("W - KNIGHT");
+		printBitBoard(BitBoards.whiteKnightsBB, enableIndex);
+		System.out.println("W - BISHOP");
+		printBitBoard(BitBoards.whiteBishopsBB, enableIndex);
+		System.out.println("W - ROOK");
+		printBitBoard(BitBoards.whiteRooksBB, enableIndex);
 		System.out.println("W - QUEEN");
 		printBitBoard(BitBoards.whiteQueensBB, enableIndex);
-		//		System.out.println("W - KING");
-		//		printBitBoard(BitBoards.whiteKingBB, enableIndex);
+		System.out.println("W - KING");
+		printBitBoard(BitBoards.whiteKingBB, enableIndex);
 
 		System.out.println("-------------------------------");
 
 		System.out.println();
-		//		System.out.println("B - PAWN");
-		//		printBitBoard(BitBoards.blackPawnsBB, enableIndex);
-		//		System.out.println("B - KNIGHT");
-		//		printBitBoard(BitBoards.blackKnightsBB, enableIndex);
-		//		System.out.println("B - BISHOP");
-		//		printBitBoard(BitBoards.blackBishopsBB, enableIndex);
-		//		System.out.println("B - ROOK");
-		//		printBitBoard(BitBoards.blackRooksBB, enableIndex);
-		//		System.out.println("B - QUEEN");
-		//		printBitBoard(BitBoards.blackQueensBB, enableIndex);
-		//		System.out.println("B - KING");
-		//		printBitBoard(BitBoards.blackKingBB, enableIndex);
+		System.out.println("B - PAWN");
+		printBitBoard(BitBoards.blackPawnsBB, enableIndex);
+		System.out.println("B - KNIGHT");
+		printBitBoard(BitBoards.blackKnightsBB, enableIndex);
+		System.out.println("B - BISHOP");
+		printBitBoard(BitBoards.blackBishopsBB, enableIndex);
+		System.out.println("B - ROOK");
+		printBitBoard(BitBoards.blackRooksBB, enableIndex);
+		System.out.println("B - QUEEN");
+		printBitBoard(BitBoards.blackQueensBB, enableIndex);
+		System.out.println("B - KING");
+		printBitBoard(BitBoards.blackKingBB, enableIndex);
 
 		System.out.println("----------- end ---------------");
 		System.out.println();

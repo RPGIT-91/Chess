@@ -95,6 +95,7 @@ public class GUI extends JFrame {
         
         JButton button1 = new JButton("Save Game");
         JButton button2 = new JButton("Load Game");
+        JButton button3 = new JButton("New Game");
         
         JLabel label1 = new JLabel("Moves calculated: ");
         JLabel label2 = new JLabel("Current Eval: ");
@@ -118,9 +119,18 @@ public class GUI extends JFrame {
             	updateBoard();            	
             }
         });
+        
+		button3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chessBoard.restartGame();
+				updateBoard();
+			}
+		});
 
         sidePanel.add(button1);
         sidePanel.add(button2);
+        sidePanel.add(button3);
         sidePanel.add(label1);
         sidePanel.add(label2);
         sidePanel.add(label3);
@@ -267,17 +277,17 @@ public class GUI extends JFrame {
 		Searcher searcher = new Searcher();
 		searcher.calcBestMove(chessBoard, depth);
 		
-		if (components[2] instanceof JLabel) {
-			JLabel label = (JLabel) components[2];
+		if (components[3] instanceof JLabel) {
+			JLabel label = (JLabel) components[3];
 			label.setText("Moves calculated: " + searcher.movesCalculated);
 		}
 		
-		if (components[3] instanceof JLabel) {
-			JLabel label = (JLabel) components[3];
-			label.setText("Current Eval: " + searcher.bestEvalSoFar);			
-		}
 		if (components[4] instanceof JLabel) {
 			JLabel label = (JLabel) components[4];
+			label.setText("Current Eval: " + searcher.bestEvalSoFar);			
+		}
+		if (components[5] instanceof JLabel) {
+			JLabel label = (JLabel) components[5];
 			label.setText("Current BestMove: " + Board.translateBBToSquare(searcher.bestMoveSoFar.getFrom()) + " " + Board.translateBBToSquare(searcher.bestMoveSoFar.getTo()));
 		}
 		
