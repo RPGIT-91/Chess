@@ -17,12 +17,6 @@ import game.movegeneration.BitBoards;
 public class Bishop implements PieceI {
 	private final int pieceType = 3;
 	private final int pieceColour; // 0 for white, 1 for black
-
-	/**
-     * Array representing bishop moves for move generation.
-     */
-	private static int[] bishopMoves = {-9, -7, 7, 9};
-
 	
 	/**
      * Constructor for the Bishop class.
@@ -52,7 +46,7 @@ public class Bishop implements PieceI {
 		long possibleMoves = 0L;
 
 		if (BitBoards.doubleCheck(isWhite)) {
-			possibleMoves |= BitBoards.generateDiagonalSlider(position, bishopMoves, isWhite, possibleMoves, false);
+			possibleMoves |= BitBoards.generateDiagonalSlider(position, isWhite, possibleMoves, false);
 			
 			//Remove options when king in check
 			long checkedMask = BitBoards.singleCheck(isWhite);
@@ -83,12 +77,13 @@ public class Bishop implements PieceI {
 		List<Long> individualBBBishop = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBBishop) {
-			possibleMoves |= BitBoards.generateDiagonalSlider(bb, bishopMoves, isWhite, possibleMoves, true);
+			possibleMoves |= BitBoards.generateDiagonalSlider(bb, isWhite, possibleMoves, true);
 		}
 		return possibleMoves;
 
 	}
 
+	@Override
 	public void toggleBB(int square, boolean isWhite){
 		BitBoards.bishopsBB ^= 1L << square;
 

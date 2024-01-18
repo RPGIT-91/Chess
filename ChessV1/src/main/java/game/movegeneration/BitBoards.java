@@ -65,6 +65,15 @@ public class BitBoards extends BitBoardHelper{
 	public static long blackQueensAM;
 	public static long blackKingAM;
 
+	/**
+	 * Array representing bishop moves for move generation.
+	 */
+	static final int[] bishopMoves = {-9, -7, 7, 9};
+	/**
+	 * Array representing rook moves for move generation.
+	 */
+	static final int[] rookMoves = {-8, -1, 1, 8};
+
 	
 	/**
      * Adds a piece to the specified position on the chessboard.
@@ -144,12 +153,11 @@ public class BitBoards extends BitBoardHelper{
 	 * generates orthogonal Slider Moves
 	 * 
 	 * @param from The position of the piece to be moved.
-	 * @param moves The moves the piece can make.
 	 * @param isWhite Indicates whether the moving piece is white.
 	 * @param possibleMoves a bitboard that contains previously calculated possibleMoves.
 	 */
-	public static long generateOrthogonalSlider(long position, int[] moves, boolean isWhite, long possibleMoves, boolean attacks) {
-		for (int move : moves) {
+	public static long generateOrthogonalSlider(long position, boolean isWhite, long possibleMoves, boolean attacks) {
+		for (int move : rookMoves) {
 			long newPosition = position;
 
 			// Generate rook moves
@@ -193,12 +201,11 @@ public class BitBoards extends BitBoardHelper{
 	 * generates diagonal slider moves
 	 * 
 	 * @param from The position of the piece to be moved.
-	 * @param moves The moves the piece can make.
 	 * @param isWhite Indicates whether the moving piece is white.
 	 * @param possibleMoves a bitboard that contains previously calculated possibleMoves.
 	 */
-	public static long generateDiagonalSlider(long position, int [] moves, boolean isWhite, long possibleMoves, boolean attacks) {
-		for (int move : moves) {
+	public static long generateDiagonalSlider(long position, boolean isWhite, long possibleMoves, boolean attacks) {
+		for (int move : bishopMoves) {
 			long newPosition = position;
 
 			// Generate diagonal moves
@@ -231,7 +238,6 @@ public class BitBoards extends BitBoardHelper{
 						}
 						break;
 					}
-					
 				}
 			}
 		}

@@ -14,11 +14,6 @@ import game.board.GameState;
  */
 
 public class Pawn implements PieceI {
-	/**
-	 * Bitboard representing pawn attacks.
-	 */
-	public static long pawnAttacks;
-
 	private final int pieceType = 1; // Unique identifier for Pawn
 	private final int pieceColour; // 0 for white, 1 for black
 
@@ -134,6 +129,7 @@ public class Pawn implements PieceI {
 	 * @return Bitboard representing possible attacks.
 	 */
 	public static long generateSamePieceAttacks(boolean isWhite) {
+		long pawnAttacks = 0L;
 		if (isWhite) {
 			pawnAttacks = ((BitBoards.whitePawnsBB << 9) & notAFile) | ((BitBoards.whitePawnsBB << 7) & notHFile);
 			return pawnAttacks;
@@ -141,7 +137,6 @@ public class Pawn implements PieceI {
 			pawnAttacks = ((BitBoards.blackPawnsBB >> 7) & notAFile) | ((BitBoards.blackPawnsBB >> 9) & notHFile);
 			return pawnAttacks;
 		}
-
 	}
 
 	//Helper Methods

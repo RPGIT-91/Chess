@@ -15,11 +15,6 @@ import game.movegeneration.BitBoards;
  * @version 1.0
  */
 public class Knight implements PieceI {
-	/**
-     * Bitboard representing knight attacks.
-     */
-	public static long knightAttacks;
-
 	private final int pieceType = 2;
 	private final int pieceColour; // 0 for white, 1 for black
 
@@ -93,7 +88,6 @@ public class Knight implements PieceI {
      */
 	public static long generateSamePieceAttacks(boolean isWhite) {
 		long possibleMoves = 0L;
-		knightAttacks = 0L;
 
 		long pieceBB = (isWhite ? BitBoards.whiteKnightsBB:BitBoards.blackKnightsBB);
 
@@ -114,10 +108,8 @@ public class Knight implements PieceI {
 			//remove moves that are not within the knights boundaries
 			possibleMoves = possibleMoves & generate5x5SquareMask(bb);
 
-			knightAttacks |= possibleMoves;
-
 		}
-		return knightAttacks;
+		return possibleMoves;
 
 	}
 
@@ -152,6 +144,7 @@ public class Knight implements PieceI {
 		return squareMask;
 	}
 
+	@Override
 	public void toggleBB(int square, boolean isWhite){
 		BitBoards.knightsBB ^= 1L << square;
 

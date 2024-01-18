@@ -52,7 +52,7 @@ public interface PieceI {
 	default boolean isWhite() {	
 		return getPieceColour() == 0; 
 	}
-
+	
 	
 	/**
      * Generates legal moves for the piece from the given position.

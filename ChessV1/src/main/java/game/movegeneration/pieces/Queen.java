@@ -19,16 +19,6 @@ public class Queen implements PieceI {
 	private final int pieceColour; // 0 for white, 1 for black
 
 	/**
-	 * Array representing bishop moves for move generation.
-	 */
-	static final int[] bishopMoves = {-9, -7, 7, 9};
-	/**
-	 * Array representing rook moves for move generation.
-	 */
-	static final int[] rookMoves = {-8, -1, 1, 8};
-
-
-	/**
 	 * Constructor for the Queen class.
 	 *
 	 * @param pieceColour The color of the queen (0 for white, 1 for black).
@@ -56,8 +46,8 @@ public class Queen implements PieceI {
 		long possibleMoves = 0L;
 
 		if (BitBoards.doubleCheck(isWhite)) {
-			possibleMoves |= BitBoards.generateDiagonalSlider(position, bishopMoves, isWhite, possibleMoves, false);
-			possibleMoves |= BitBoards.generateOrthogonalSlider(position, rookMoves, isWhite, possibleMoves, false);
+			possibleMoves |= BitBoards.generateDiagonalSlider(position, isWhite, possibleMoves, false);
+			possibleMoves |= BitBoards.generateOrthogonalSlider(position, isWhite, possibleMoves, false);
 			
 			
 			//Remove options when king in check
@@ -89,8 +79,8 @@ public class Queen implements PieceI {
 		List<Long> individualBBQueen = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBQueen) {
-			possibleMoves |= BitBoards.generateDiagonalSlider(bb, bishopMoves, isWhite, possibleMoves, true);
-			possibleMoves |= BitBoards.generateOrthogonalSlider(bb, rookMoves, isWhite, possibleMoves, true);
+			possibleMoves |= BitBoards.generateDiagonalSlider(bb, isWhite, possibleMoves, true);
+			possibleMoves |= BitBoards.generateOrthogonalSlider(bb, isWhite, possibleMoves, true);
 			
 		}
 		

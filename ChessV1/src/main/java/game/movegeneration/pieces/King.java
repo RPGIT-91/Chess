@@ -18,10 +18,6 @@ public class King implements PieceI {
      */
 	private static int[] kingMoves = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-	/**
-     * Bitboard representing king attacks.
-     */
-	public static long kingAttacks;
 	private final int pieceType = 6;
 	private final int pieceColour; // 0 for white, 1 for black
 
@@ -164,6 +160,7 @@ public class King implements PieceI {
 	}
 
 
+	@Override
 	public void toggleBB(int square, boolean isWhite){
 		BitBoards.kingsBB ^= 1L << square;
 

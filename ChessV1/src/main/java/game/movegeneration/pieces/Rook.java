@@ -20,11 +20,6 @@ public class Rook implements PieceI {
 	private final int pieceColour; // 0 for white, 1 for black
 
 	/**
-	 * Array representing rook moves for move generation.
-	 */
-	private static int[] rookMoves = {-8, -1, 1, 8};
-
-	/**
 	 * Constructor for the Rook class.
 	 *
 	 * @param pieceColour The color of the rook (0 for white, 1 for black).
@@ -52,7 +47,7 @@ public class Rook implements PieceI {
 		long possibleMoves = 0L;
 		if (BitBoards.doubleCheck(isWhite)) {
 			//generate Orthogonal Slider
-			possibleMoves |= BitBoards.generateOrthogonalSlider(position, rookMoves, isWhite, possibleMoves, false);
+			possibleMoves |= BitBoards.generateOrthogonalSlider(position, isWhite, possibleMoves, false);
 
 			//Remove options when pinned
 			possibleMoves &= BitBoards.checkOrthogonalPin(from, isWhite);
@@ -83,7 +78,7 @@ public class Rook implements PieceI {
 		List<Long> individualBBRook = BitBoards.createIndividualBitboards(pieceBB);
 		// Print the individual bitboards
 		for (long bb : individualBBRook) {
-			possibleMoves |= BitBoards.generateOrthogonalSlider(bb, rookMoves, isWhite, possibleMoves, true);
+			possibleMoves |= BitBoards.generateOrthogonalSlider(bb, isWhite, possibleMoves, true);
 		}
 		return possibleMoves;
 
