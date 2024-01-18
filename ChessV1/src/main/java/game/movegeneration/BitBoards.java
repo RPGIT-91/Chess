@@ -68,11 +68,11 @@ public class BitBoards extends BitBoardHelper{
 	/**
 	 * Array representing bishop moves for move generation.
 	 */
-	static final int[] bishopMoves = {-9, -7, 7, 9};
+	private static final int[] bishopMoves = {-9, -7, 7, 9};
 	/**
 	 * Array representing rook moves for move generation.
 	 */
-	static final int[] rookMoves = {-8, -1, 1, 8};
+	private static final int[] rookMoves = {-8, -1, 1, 8};
 
 	
 	/**
@@ -275,8 +275,6 @@ public class BitBoards extends BitBoardHelper{
 		if ((kingSquare & enemyQueens) != 0) {
 			checks += 1;
 		}
-		System.out.println("number of checks" + checks);
-		System.out.println(checks<2);
 		return (checks < 2);
 	}
 

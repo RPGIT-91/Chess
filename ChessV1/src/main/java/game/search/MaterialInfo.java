@@ -12,13 +12,6 @@ import game.movegeneration.BitBoards;
  * @version 1.0
  */
 public class MaterialInfo extends PieceSquareTable{
-	private int numPawns;
-	private int numBishops;
-	private int numQueens;
-	private int numRooks;
-	private int numKnights;
-
-
 	public int materialScore;
 	public int materialValue;
 	public float endgameT;
@@ -52,6 +45,12 @@ public class MaterialInfo extends PieceSquareTable{
      * @param isWhite Indicates whether the side is white.
      */
 	public MaterialInfo(boolean isWhite) {
+		int numPawns;
+		int numKnights;
+		int numBishops;
+		int numRooks;
+		int numQueens;
+				
 		if (isWhite) {
 			numPawns = Long.bitCount(BitBoards.whitePawnsBB); //try if it works.
 			numKnights = BitBoardHelper.countSetBits(BitBoards.whiteKnightsBB);

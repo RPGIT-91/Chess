@@ -30,11 +30,6 @@ public class Evaluation {
      * Mop-up score for the black side.
      */
 	private int mopUpBlack;
-	
-	/**
-     * Flag indicating whether the side being evaluated is white.
-     */
-	public boolean isWhite;
 	/**
      * Material score for the position.
      */
@@ -57,7 +52,6 @@ public class Evaluation {
      * @param board The chessboard for which to perform the evaluation.
      */
 	public Evaluation(Board board) {
-		isWhite = board.gameStateStack.peek().getIsWhiteToMove();
 		
 		whiteMaterial = new MaterialInfo(true);
 		blackMaterial = new MaterialInfo(false);

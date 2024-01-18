@@ -17,18 +17,18 @@ import game.board.GameState;
  * @version 1.0
  */
 public interface PieceI {	
-	public static final long fileA = 0x101010101010101L;
-	public static final long notAFile = ~fileA;
-	public static final long notHFile = ~(fileA << 7);
+	static final long fileA = 0x101010101010101L;
+	static final long notAFile = ~fileA;
+	static final long notHFile = ~(fileA << 7);
 
-	public static final long rank1 = 0b11111111L;
-	public static final long rank2 = rank1 << 8;
-	public static final long rank3 = rank2 << 8;
-	public static final long rank4 = rank3 << 8;
-	public static final long rank5 = rank4 << 8;
-	public static final long rank6 = rank5 << 8;
-	public static final long rank7 = rank6 << 8;
-	public static final long Rank8 = rank7 << 8;
+	static final long rank1 = 0b11111111L;
+	static final long rank2 = rank1 << 8;
+	static final long rank3 = rank2 << 8;
+	static final long rank4 = rank3 << 8;
+	static final long rank5 = rank4 << 8;
+	static final long rank6 = rank5 << 8;
+	static final long rank7 = rank6 << 8;
+	static final long Rank8 = rank7 << 8;
 
 	/**
      * Returns a unique identifier for each piece type.

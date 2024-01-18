@@ -19,9 +19,9 @@ public class FEN {
 	 /**
      * The starting position FEN string for a standard chess game.
      */
-	public static final String START_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+	protected static final String START_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-	public static final String fileNames = "abcdefgh";
+	protected static final String fileNames = "abcdefgh";
 
 	/**
      * Generates the current FEN string based on the given chess board and game state.
@@ -115,7 +115,7 @@ public class FEN {
 		boolean isEnPassant = epFileIndex != -1;
 
 		if (isEnPassant) {
-			fen.append(SquareNameFromCoordinate(epFileIndex, epRankIndex));
+			fen.append(squareNameFromCoordinate(epFileIndex, epRankIndex));
 		} else {
 			fen.append('-');
 		}
@@ -256,7 +256,7 @@ public class FEN {
      * @param rankIndex The rank index (0-7).
      * @return The FEN square name (e.g., "a1").
      */
-	public static String SquareNameFromCoordinate(int fileIndex, int rankIndex) {
+	private static String squareNameFromCoordinate(int fileIndex, int rankIndex) {
 		return fileNames.charAt(fileIndex) + "" + (rankIndex + 1);
 	}
 

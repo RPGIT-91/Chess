@@ -466,6 +466,12 @@ public class Board {
 
 	// ################ debugging helper.
 	//method to display Board in Console
+	
+	/**
+	 * Debugging: Prints ChessBoard to Console.
+	 *
+	 * @param square The chess board to print.
+	 */
 	public void printBoard(PieceI[] square) {
 		int count = 0;
 
@@ -525,6 +531,12 @@ public class Board {
 		System.out.println();
 	}
 
+	/**
+	 * Debugging: Prints BitBoard to console.
+	 *
+	 * @param bits The bitboard mask to print.
+	 * @param enableIndex If true, prints the index of each square on the board.
+	 */
 	public static void printBitBoard(long bits, boolean enableIndex) {
 		for (int rank = 7; rank >= 0; rank--) {
 			for (int file = 0; file < 8; file++) {
@@ -553,7 +565,11 @@ public class Board {
 	}
 
 
-	//For debugging bitBoard Synchro
+	/**
+	 * Debugging: Prints All BitBoards of Pieces and AttackMasks.
+	 *
+	 * @param enableIndex If true, prints the index of each square on the board.
+	 */
 	public static void printAllBB(boolean enableIndex) {
 		System.out.println();
 		System.out.println("-------------------------------");

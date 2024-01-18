@@ -20,20 +20,18 @@ import game.movegeneration.pieces.PieceI;
  * @version 1.0
  */
 public class Searcher {
-	// 
+	// Settings
 	private static final boolean turnOnMoveOrdering = true;
 	private static final boolean turnOnAlphaBeta = true;
+	private static final boolean showDebugInfo = false;
 
 	//limit quiescence search depth
 	private int quiescenceDepth = 10; //ply
-	
-	private static final boolean showDebugInfo = true;
 
 	public int movesCalculated;
 	public Move bestMoveSoFar;
 	public int bestEvalSoFar;
-	public int bestEvalDepth2;
-	public int startingDepth;
+	private int startingDepth;
 
 	/**
      * Calculates the best move for the given board position and search depth.

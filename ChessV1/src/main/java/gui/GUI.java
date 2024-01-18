@@ -24,12 +24,16 @@ import java.awt.event.ActionListener;
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private String[] pieceStrings = {"♟", "♞", "♝", "♜", "♛", "♚"};
-	public int depth = 1;
+	public int depth = 4;
 	
 	private JPanel[][] panels;
 	private JPanel sidePanel;
 	public Board chessBoard;
 
+	
+	private int selectedRow = -1;
+	private int selectedCol = -1;
+	private boolean selectingMode = true;
 	/**
      * Constructs a GUI object for a chess game.
      *
@@ -145,10 +149,6 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
-
-	private int selectedRow = -1;
-	private int selectedCol = -1;
-	private boolean selectingMode = true;
 
 	
 	/**
