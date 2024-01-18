@@ -11,7 +11,7 @@ import game.board.Board;
  * @author Ryu
  * @version 1.0
  */
-abstract class PieceSquareTable {
+class PieceSquareTable {
 
 	/**
      * Reads the value from the piece square table for the given square and side.
@@ -92,8 +92,8 @@ abstract class PieceSquareTable {
 			-10,  0,  5,  5,  5,  5,  0,-10,
 			-5,   0,  5,  5,  5,  5,  0, -5,
 			-5,   0,  5,  5,  5,  5,  0, -5,
-			-10,  5,  5,  5,  5,  5,  0,-10,
-			-10,  0,  5,  0,  0,  0,  0,-10,
+			-10,  0,  5,  5,  5,  5,  0,-10,
+			-10,  0,  0,  0,  0,  0,  0,-10,
 			-20,-10,-10, -5, -5,-10,-10,-20
 	};
 

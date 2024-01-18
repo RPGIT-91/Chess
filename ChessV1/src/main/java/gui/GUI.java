@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private String[] pieceStrings = {"♟", "♞", "♝", "♜", "♛", "♚"};
-	public int depth = 4;
+	public int depth = 2;
 	
 	private JPanel[][] panels;
 	private JPanel sidePanel;

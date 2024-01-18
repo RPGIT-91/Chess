@@ -139,6 +139,104 @@ public class BitBoards extends BitBoardHelper{
 
 		updateAll();
 	}
+	
+	/**
+	 * generates orthogonal Slider Moves
+	 * 
+	 * @param from The position of the piece to be moved.
+	 * @param moves The moves the piece can make.
+	 * @param isWhite Indicates whether the moving piece is white.
+	 * @param possibleMoves a bitboard that contains previously calculated possibleMoves.
+	 */
+	public static long generateOrthogonalSlider(long position, int[] moves, boolean isWhite, long possibleMoves, boolean attacks) {
+		for (int move : moves) {
+			long newPosition = position;
+
+			// Generate rook moves
+			while (true) {
+				int oldRank = Long.numberOfTrailingZeros(newPosition) / 8;
+				int oldFile = Long.numberOfTrailingZeros(newPosition) % 8;
+
+				newPosition = (newPosition << move | newPosition >>> -move);
+
+				// Check if the new position is outside the board or on a different rank/file
+				int newRank = Long.numberOfTrailingZeros(newPosition) / 8;
+				int newFile = Long.numberOfTrailingZeros(newPosition) % 8;
+
+				if (Math.abs(newRank - oldRank) == 7 | Math.abs(newFile - oldFile) == 7) {
+					break;
+				}
+
+				// Check if the new square is unoccupied or occupied by an opponent's piece
+				if ((newPosition & BitBoards.allBB) == 0) {
+					possibleMoves |= newPosition;
+				} else {
+					// checking for attacksMask?
+					if (attacks) {
+						//stop sliding
+						possibleMoves |= newPosition;
+						break;
+					} else {
+						// If the square is occupied by an opponent's piece, include the capture move and stop sliding
+						if ((isWhite && (newPosition & BitBoards.blackBB) != 0) || (!isWhite && (newPosition & BitBoards.whiteBB) != 0)) {
+							possibleMoves |= newPosition;
+						}
+						break;
+					}
+				}
+			}
+		}
+		return possibleMoves;
+	}
+
+	/**
+	 * generates diagonal slider moves
+	 * 
+	 * @param from The position of the piece to be moved.
+	 * @param moves The moves the piece can make.
+	 * @param isWhite Indicates whether the moving piece is white.
+	 * @param possibleMoves a bitboard that contains previously calculated possibleMoves.
+	 */
+	public static long generateDiagonalSlider(long position, int [] moves, boolean isWhite, long possibleMoves, boolean attacks) {
+		for (int move : moves) {
+			long newPosition = position;
+
+			// Generate diagonal moves
+			while (true) {	        	
+				int oldRank = Long.numberOfTrailingZeros(newPosition) / 8;
+				int oldFile = Long.numberOfTrailingZeros(newPosition) % 8;
+
+				newPosition = (newPosition << move) | (newPosition >>> -move);
+
+				// Check if the new position is outside the board or on a different diagonal
+				int newRank = Long.numberOfTrailingZeros(newPosition) / 8;
+				int newFile = Long.numberOfTrailingZeros(newPosition) % 8;
+
+				if (Math.abs(newRank - oldRank) == 7 | Math.abs(newRank-oldRank) == 0 | Math.abs(newFile - oldFile) == 7) {
+					break;
+				}
+				// Check if the new square is unoccupied or occupied by an opponent's piece
+				if ((newPosition & BitBoards.allBB) == 0) {
+					possibleMoves |= newPosition;
+				} else {
+					// checking for attacksMask?
+					if (attacks) {
+						//stop sliding
+						possibleMoves |= newPosition;
+						break;
+					} else {
+						// If the square is occupied by an opponent's piece, include the capture move and stop sliding
+						if ((isWhite && (newPosition & BitBoards.blackBB) != 0) || (!isWhite && (newPosition & BitBoards.whiteBB) != 0)) {
+							possibleMoves |= newPosition;
+						}
+						break;
+					}
+					
+				}
+			}
+		}
+		return possibleMoves;
+	}
 
 	/**
      * Checks if the king of the specified color is in a double-check position.
@@ -156,22 +254,21 @@ public class BitBoards extends BitBoardHelper{
 		long enemyRooks = (!isWhite ? whiteRooksAM:blackRooksAM);
 		long enemyQueens = (!isWhite ? whiteQueensAM:blackQueensAM);
 
-		if ((kingSquare & enemyPawns) == 1) {
+		if ((kingSquare & enemyPawns) != 0) {
 			checks += 1;
 		}
-		if ((kingSquare & enemyKnights) == 1) {
+		if ((kingSquare & enemyKnights) != 0) {
 			checks += 1;
 		}
-		if ((kingSquare & enemyBishops) == 1) {
+		if ((kingSquare & enemyBishops) != 0) {
 			checks += 1;
 		}
-		if ((kingSquare & enemyRooks) == 1) {
+		if ((kingSquare & enemyRooks) != 0) {
 			checks += 1;
 		}
-		if ((kingSquare & enemyQueens) == 1) {
+		if ((kingSquare & enemyQueens) != 0) {
 			checks += 1;
 		}
-
 		return (checks < 1);
 	}
 
