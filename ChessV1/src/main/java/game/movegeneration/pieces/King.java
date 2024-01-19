@@ -1,5 +1,6 @@
 package game.movegeneration.pieces;
 
+import game.board.Board;
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 
@@ -99,6 +100,7 @@ public class King implements PieceI {
 		//# Castling
 		long kingPiece = (isWhite ? BitBoards.whiteKingBB : BitBoards.blackKingBB);
 		long castleBoard = previousGameState.getCastleBoard(isWhite);
+		
 		//check for Castle privilege, have the pieces moved?
 		if(castleBoard != 0) {
 			long freeSquare = 0L;
@@ -107,20 +109,36 @@ public class King implements PieceI {
 			//King Side Castle
 			//add restrictions if in between squares are occupied or attacked
 			moveSquare = kingPiece | (kingPiece << 1) | (kingPiece << 2);
-			freeSquare = moveSquare;
+			freeSquare = moveSquare &~ kingPiece;
 			
-			//if blocked or attacked remove
+
 			if((freeSquare & BitBoards.allBB) != 0 || ((moveSquare & attackMask) != 0)) {
+				System.out.println("KS not possible");
+				
 				castleBoard &= ~((1L << 6) | (1L <<  62));
 			}
 
 			//Queen Side Castle
-			moveSquare = (kingPiece >> 1) | (kingPiece >> 2);
-			freeSquare = moveSquare | (kingPiece >> 3);
+			moveSquare = kingPiece | (kingPiece >> 1) | (kingPiece >> 2);
+			freeSquare = (moveSquare | (kingPiece >> 3)) &~ kingPiece;
+			
+			
+			//if blocked or attacked remove
+			System.out.println("freeSquare");
+			Board.printBitBoard(freeSquare, false);
+			
+			System.out.println("moveSquare");
+			Board.printBitBoard(moveSquare, false);
+			
+			System.out.println("allBB");
+			Board.printBitBoard(BitBoards.allBB, false);
 
 			if((freeSquare & BitBoards.allBB) != 0 || ((moveSquare & attackMask) != 0)) {
 				castleBoard &= ~((1L << 2) | (1L <<  58));
 			}
+			
+			System.out.println("castleBoard");
+			Board.printBitBoard(castleBoard, false);
 			possibleMoves |= castleBoard;
 		}
 		return possibleMoves;

@@ -46,13 +46,10 @@ public class Queen implements PieceI {
 		long position = 1L << from;
 		long possibleMoves = 0L;
 
-		System.out.println("Starting debug");
 		if (BitBoards.doubleCheck(isWhite)) {
 			
 			possibleMoves |= BitBoards.generateDiagonalSlider(position, isWhite, possibleMoves, false);
 			possibleMoves |= BitBoards.generateOrthogonalSlider(position, isWhite, possibleMoves, false);
-			
-			Board.printBitBoard(possibleMoves, false);
 			
 			//Remove options when king in check
 			long checkedMask = BitBoards.singleCheck(isWhite);
