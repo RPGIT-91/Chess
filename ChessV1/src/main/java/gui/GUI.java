@@ -465,11 +465,17 @@ public class GUI extends JFrame implements GameObserver{
 
 	@Override
 	public void makeBotMove() {
-
-
-		chessBoard.movePiece(BotSetting.getNextFrom(), BotSetting.getNextTo());
-		updateBoard();
-		update(null, null);
+		
+		boolean isWhite = chessBoard.gameStateStack.peek().getIsWhiteToMove();
+		
+		if (isWhite & botSettings.isWhiteBotEnabled() || !isWhite & botSettings.isBlackBotEnabled()) {
+			chessBoard.movePiece(BotSetting.getNextFrom(), BotSetting.getNextTo());
+			updateBoard();
+			update(null, null);
+		} else {
+			System.out.println("Bot is not set to move");
+		}
+		
 
 	}
 }
