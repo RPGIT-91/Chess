@@ -39,7 +39,7 @@ public class Main{
 		BotSetting botSettings = new BotSetting();
 		
 		botSettings.setBlackBotEnabled(true);
-		botSettings.setWhiteBotEnabled(true);
+		botSettings.setWhiteBotEnabled(false);
 		
 		//board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ");
 		
@@ -52,11 +52,11 @@ public class Main{
 //		board.loadFENBoard("8/3KP3/8/8/8/8/6k1/7q b - - 0 1");
 //		board.loadFENBoard("rnbqkbnr/ppp2ppp/3pp3/1N6/Q7/8/PPPPPPPP/R1B1KBNR w KQkq - 0 1");
 		
-		board.loadFENBoard("rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4");
+//		board.loadFENBoard("rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4");
 		
 		
 		//Test Position
-		//board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+//		board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
 		
 		// End Game
 //		board.loadFENBoard("8/8/8/4k3/8/8/8/K1R5 w - - 0 1");

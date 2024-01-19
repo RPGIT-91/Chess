@@ -1,7 +1,6 @@
 package game.board;
 
 import java.util.Stack;
-import java.io.*;
 
 import game.movegeneration.BitBoards;
 import game.movegeneration.pieces.PieceI;
@@ -366,39 +365,7 @@ public class Board {
 	protected void pushToFENStack(String fen) {
 		fenStack.push(fen);
 		//System.out.println(fen);
-	}
-	
-	/**
-	 * Saves the current game state to a file named "SavedGame.txt" in the project directory.
-	 * The method writes the FEN string of the current game state to the file.
-	 * Displays a success message if the save is successful, otherwise prints an error message.
-	 */
-	public void saveGame() {
-		try {
-			// Get the project directory
-			String projectDirectory = System.getProperty("user.dir");
-
-			// Create a File object for the SavedGame.txt file in the project directory
-			File savedGameFile = new File(projectDirectory, "SavedGame.txt");
-
-			// If the file doesn't exist, create it
-			if (!savedGameFile.exists()) {
-				savedGameFile.createNewFile();
-			}
-
-			// Write the value from fenStack.peek() into the file
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(savedGameFile))) {
-				String fenValue = fenStack.peek(); // Assuming fenStack is a Stack<String>
-				writer.write(fenValue);
-				System.out.println("Game saved successfully.");
-			} catch (IOException e) {
-				System.err.println("Error writing to file: " + e.getMessage());
-			}
-
-		} catch (IOException e) {
-			System.err.println("Error creating file: " + e.getMessage());
-		}
-	}
+	}	
 	
 	/**
 	 * Inverts the position info. A standard 2D Array is nubered 0-63 but from top to botom unlike the BitBoard which is numbered bottom to top.

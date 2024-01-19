@@ -9,7 +9,14 @@ import game.search.Searcher;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Observable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * The GUI class represents the graphical user interface for a chess game.
@@ -114,17 +121,88 @@ public class GUI extends JFrame implements GameObserver{
 		label2.setFont(new Font("Serif", Font.PLAIN, 12));
 		label3.setFont(new Font("Serif", Font.PLAIN, 12));
 
+
+		/**
+		 * Saves the current game state to a file named "SavedGame.txt" in the project directory.
+		 * The method writes the FEN string of the current game state to the file.
+		 * Displays a success message if the save is successful, otherwise prints an error message.
+		 */
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Code to execute when Button 1 is clicked                
-				chessBoard.saveGame();
+				// Code to execute when Button 1 is clicked   
+				try {
+					// Create a FileChooser to get the user-selected file
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setDialogTitle("Save Game");
+					// Set the initial directory to be within your project
+					String projectPath = System.getProperty("user.dir");
+					String initialFolderPath = projectPath + File.separator + "SavedGames";
+			        fileChooser.setCurrentDirectory(new File(initialFolderPath));
+			        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
+			        fileChooser.setFileFilter(filter);
+
+					int userSelection = fileChooser.showSaveDialog(null);
+
+					if (userSelection == JFileChooser.APPROVE_OPTION) {
+						File fileToSave = fileChooser.getSelectedFile();
+
+						// Ensure the file has the .txt extension
+		                if (!fileToSave.getName().toLowerCase().endsWith(".txt")) {
+		                    fileToSave = new File(fileToSave.getParentFile(), fileToSave.getName() + ".txt");
+		                }
+						// Write the serialized Board object to the selected file
+						try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+							String fenValue = chessBoard.fenStack.peek();
+							writer.write(fenValue);
+							System.out.println("Game saved successfully to " + fileToSave);
+						} catch (IOException f) {
+							System.err.println("Error writing to file: " + f.getMessage());
+						}		              
+					}
+				} catch (Exception g) {
+					System.err.println("Error saving game: " + g.getMessage());
+				}
+
 			}
 		});
 
+		/**
+		 * loads a previously saved game from a file named by the user 
+		 * The method imports the FEN string of the saved game from the file into the game state 
+		 * Displays a success message if the import is successful, otherwise prints an error message.
+		 */
 		button2.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {            	            	         
+			public void actionPerformed(ActionEvent e) { 
+				try {
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setDialogTitle("Load Game");
+					// Set the initial directory to be within your project
+					String projectPath = System.getProperty("user.dir");
+					String initialFolderPath = projectPath + File.separator + "SavedGames";
+			        fileChooser.setCurrentDirectory(new File(initialFolderPath));
+			        
+			        // Restrict file types to .txt
+			        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
+			        fileChooser.setFileFilter(filter);
+					int userSelection = fileChooser.showOpenDialog(null);
+
+					if (userSelection == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = fileChooser.getSelectedFile();
+
+						try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
+							String fenValue = reader.readLine();
+							chessBoard.loadFENBoard(fenValue);
+							System.out.println("Game loaded successfully from " + selectedFile);
+						} catch (IOException f) {
+							System.err.println("Error loading game: " + f.getMessage());
+						}
+					}
+				} catch (Exception g) {
+					System.err.println("Error loading game: " + g.getMessage());
+				}
+
 				updateBoard();            	
 			}
 		});
@@ -283,7 +361,7 @@ public class GUI extends JFrame implements GameObserver{
 		Component[] components = sidePanel.getComponents();
 		Searcher searcher = new Searcher();
 		searcher.calcBestMove(chessBoard, depth);
-		
+
 		BotSetting.setNextFrom(searcher.bestMoveSoFar.getFrom());
 		BotSetting.setNextTo(searcher.bestMoveSoFar.getTo());
 
@@ -374,21 +452,21 @@ public class GUI extends JFrame implements GameObserver{
 	public void update(Observable o, Object arg) {
 
 		// Introduce a delay before making the bot move
-        Timer timer = new Timer(500, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                makeBotMove();
-            }
-        });
-        timer.setRepeats(false);
-        timer.start();
+		Timer timer = new Timer(500, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				makeBotMove();
+			}
+		});
+		timer.setRepeats(false);
+		timer.start();
 
 	}
 
 	@Override
 	public void makeBotMove() {
 
-		
+
 		chessBoard.movePiece(BotSetting.getNextFrom(), BotSetting.getNextTo());
 		updateBoard();
 		update(null, null);
