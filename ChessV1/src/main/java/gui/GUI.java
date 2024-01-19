@@ -372,17 +372,12 @@ public class GUI extends JFrame implements GameObserver{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("CP1");
-
-		boolean isWhite = chessBoard.gameStateStack.peek().getIsWhiteToMove();
-
-		System.out.println(isWhite);
 
 		// Introduce a delay before making the bot move
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                makeBotMove(isWhite);
+                makeBotMove();
             }
         });
         timer.setRepeats(false);
@@ -391,13 +386,12 @@ public class GUI extends JFrame implements GameObserver{
 	}
 
 	@Override
-	public void makeBotMove(boolean isWhite) {
+	public void makeBotMove() {
 
 		
 		chessBoard.movePiece(BotSetting.getNextFrom(), BotSetting.getNextTo());
 		updateBoard();
 		update(null, null);
-		System.out.println("made move");
 
 	}
 }

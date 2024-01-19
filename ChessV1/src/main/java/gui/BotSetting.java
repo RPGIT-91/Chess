@@ -6,6 +6,7 @@ public class BotSetting extends Observable{
 	private boolean whiteBotEnabled;
     private boolean blackBotEnabled;
     
+    //updated from sidePanel and kept as info for the bot to use.
     private static int nextFrom;
     private static int nextTo;
 
