@@ -3,6 +3,7 @@ import javax.swing.SwingUtilities;
 
 import game.board.*;
 import gui.GUI;
+import gui.BotSetting;
 
 // # Introduction
 // Chess Game with move validation
@@ -35,6 +36,11 @@ import gui.GUI;
 public class Main{	
 	public static void main(String[] args) {
 		Board board = new Board();
+		BotSetting botSettings = new BotSetting();
+		
+		botSettings.setBlackBotEnabled(true);
+		botSettings.setWhiteBotEnabled(true);
+		
 		//board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ");
 		
 		//board.loadFENBoard("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1 ");
@@ -60,7 +66,7 @@ public class Main{
 		SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new GUI(board);
+                new GUI(board, botSettings);
             }
 		});
 		//debugging 

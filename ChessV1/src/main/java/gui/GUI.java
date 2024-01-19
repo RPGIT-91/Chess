@@ -9,6 +9,7 @@ import game.search.Searcher;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
 
 /**
  * The GUI class represents the graphical user interface for a chess game.
@@ -21,109 +22,113 @@ import java.awt.event.ActionListener;
  * @author Ryu
  * @version 1.0
  */
-public class GUI extends JFrame {
+public class GUI extends JFrame implements GameObserver{
 	private static final long serialVersionUID = 1L;
 	private String[] pieceStrings = {"♟", "♞", "♝", "♜", "♛", "♚"};
 	public int depth = 4;
-	
+
 	private JPanel[][] panels;
 	private JPanel sidePanel;
 	public Board chessBoard;
 
-	
+	private BotSetting botSettings;
+
 	private int selectedRow = -1;
 	private int selectedCol = -1;
 	private boolean selectingMode = true;
 	/**
-     * Constructs a GUI object for a chess game.
-     *
-     * @param chessBoard The chessboard associated with the GUI.
-     */
-	public GUI(Board chessBoard) {
+	 * Constructs a GUI object for a chess game.
+	 *
+	 * @param chessBoard The chessboard associated with the GUI.
+	 */
+	public GUI(Board chessBoard, BotSetting botS) {
 		this.chessBoard = chessBoard;
+
+		this.botSettings = botS;
+		botSettings.addObserver(this);
 		initializeUI();
 	}
-	
+
 	/**
-     * Initializes the graphical user interface with the chessboard,
-     * side panel, buttons, and labels.
-     */
+	 * Initializes the graphical user interface with the chessboard,
+	 * side panel, buttons, and labels.
+	 */
 	public void initializeUI() {
-        int rows = 8;
-        int cols = 8;
+		int rows = 8;
+		int cols = 8;
 
-        panels = new JPanel[rows][cols];
+		panels = new JPanel[rows][cols];
 
-        setTitle("Chess GUI");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
+		setTitle("Chess GUI");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
-        // Create a panel for the chessboard
-        JPanel chessboardPanel = new JPanel(new GridLayout(rows, cols));
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                panels[row][col] = new JPanel();
-                panels[row][col].setLayout(new BorderLayout());
-                panels[row][col].setPreferredSize(new Dimension(80, 80));
+		// Create a panel for the chessboard
+		JPanel chessboardPanel = new JPanel(new GridLayout(rows, cols));
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				panels[row][col] = new JPanel();
+				panels[row][col].setLayout(new BorderLayout());
+				panels[row][col].setPreferredSize(new Dimension(80, 80));
 
-                if (((row + col) % 2) != 0) {
-                    panels[row][col].setBackground(Color.decode("#e9d5c4"));
-                } else {
-                    panels[row][col].setBackground(Color.decode("#d2ad8e"));
-                }
+				if (((row + col) % 2) != 0) {
+					panels[row][col].setBackground(Color.decode("#e9d5c4"));
+				} else {
+					panels[row][col].setBackground(Color.decode("#d2ad8e"));
+				}
 
-                final int currentRow = row;
-                final int currentCol = col;
+				final int currentRow = row;
+				final int currentCol = col;
 
-                panels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mousePressed(java.awt.event.MouseEvent evt) {
-                        handlePanelClick(currentRow, currentCol, evt);
-                    }
-                });
+				panels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
+					public void mousePressed(java.awt.event.MouseEvent evt) {
+						handlePanelClick(currentRow, currentCol, evt);
+					}
+				});
 
-                chessboardPanel.add(panels[row][col]);
-            }
-        }
+				chessboardPanel.add(panels[row][col]);
+			}
+		}
 
-        // Create a panel for additional components
-        sidePanel = new JPanel();
-        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+		// Create a panel for additional components
+		sidePanel = new JPanel();
+		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 
-        
-        //Searcher.calcBestMove(chessBoard, depth);
-        
-        
-        // Add your buttons and displays to sidePanel
-        // For example:
-        
-        
-        JButton button1 = new JButton("Save Game");
-        JButton button2 = new JButton("Load Game");
-        JButton button3 = new JButton("New Game");
-        
-        JLabel label1 = new JLabel("Moves calculated: ");
-        JLabel label2 = new JLabel("Current Eval: ");
-        JLabel label3 = new JLabel("Current BestMove: ");
-        
-        label1.setFont(new Font("Serif", Font.PLAIN, 12));
-        label2.setFont(new Font("Serif", Font.PLAIN, 12));
-        label3.setFont(new Font("Serif", Font.PLAIN, 12));
-        
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Code to execute when Button 1 is clicked                
-                chessBoard.saveGame();
-            }
-        });
 
-        button2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {            	            	         
-            	updateBoard();            	
-            }
-        });
-        
+		//Searcher.calcBestMove(chessBoard, depth);
+
+
+		// Add your buttons and displays to sidePanel
+		// For example:
+
+
+		JButton button1 = new JButton("Save Game");
+		JButton button2 = new JButton("Load Game");
+		JButton button3 = new JButton("New Game");
+
+		JLabel label1 = new JLabel("Moves calculated: ");
+		JLabel label2 = new JLabel("Current Eval: ");
+		JLabel label3 = new JLabel("Current BestMove: ");
+
+		label1.setFont(new Font("Serif", Font.PLAIN, 12));
+		label2.setFont(new Font("Serif", Font.PLAIN, 12));
+		label3.setFont(new Font("Serif", Font.PLAIN, 12));
+
+		button1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Code to execute when Button 1 is clicked                
+				chessBoard.saveGame();
+			}
+		});
+
+		button2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {            	            	         
+				updateBoard();            	
+			}
+		});
+
 		button3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -132,33 +137,33 @@ public class GUI extends JFrame {
 			}
 		});
 
-        sidePanel.add(button1);
-        sidePanel.add(button2);
-        sidePanel.add(button3);
-        sidePanel.add(label1);
-        sidePanel.add(label2);
-        sidePanel.add(label3);
+		sidePanel.add(button1);
+		sidePanel.add(button2);
+		sidePanel.add(button3);
+		sidePanel.add(label1);
+		sidePanel.add(label2);
+		sidePanel.add(label3);
 
-        // Add chessboardPanel to the center and sidePanel to the east
-        add(chessboardPanel, BorderLayout.CENTER);
-        add(sidePanel, BorderLayout.EAST);
+		// Add chessboardPanel to the center and sidePanel to the east
+		add(chessboardPanel, BorderLayout.CENTER);
+		add(sidePanel, BorderLayout.EAST);
 
-        updateBoard();
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
+		updateBoard();
+		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
 
 
-	
+
 	/**
-     * Handles the click event on a chessboard panel. Manages piece selection
-     * and move execution based on user input.
-     *
-     * @param row The row index of the clicked panel.
-     * @param col The column index of the clicked panel.
-     * @param evt The mouse event associated with the click.
-     */
+	 * Handles the click event on a chessboard panel. Manages piece selection
+	 * and move execution based on user input.
+	 *
+	 * @param row The row index of the clicked panel.
+	 * @param col The column index of the clicked panel.
+	 * @param evt The mouse event associated with the click.
+	 */
 	private void handlePanelClick(int row, int col, java.awt.event.MouseEvent evt) {
 		if (selectingMode) {
 			// First click - highlight possible moves
@@ -170,32 +175,34 @@ public class GUI extends JFrame {
 			selectingMode = false;
 
 		} else {
-			 // Second click
+			// Second click
 			long currentValidMoves = chessBoard.showValidMoves(toBBSquare(row, col));
-	        long validMovesBitboard = chessBoard.showValidMoves(toBBSquare(selectedRow, selectedCol));
-//	        chessBoard.printBitBoard((1L << (inverseRowAndCol(row) * 8 + col)), false);
-	        if ((validMovesBitboard & (1L << toBBSquare(row, col))) != 0) {
-	            // Second click on a valid move - move the piece
-	            chessBoard.movePiece(toBBSquare(selectedRow, selectedCol), toBBSquare(row, col));	      
-	            resetSelection();
-	            updateBoard();
-	            selectingMode = true;
-	        } else {
-	            // Second click on a different square - show valid moves for that square
-	            showValidMoves(currentValidMoves);
-	            selectedRow = row;
-	            selectedCol = col;
-	            selectingMode = false;
-	        }
+			long validMovesBitboard = chessBoard.showValidMoves(toBBSquare(selectedRow, selectedCol));
+			//	        chessBoard.printBitBoard((1L << (inverseRowAndCol(row) * 8 + col)), false);
+			if ((validMovesBitboard & (1L << toBBSquare(row, col))) != 0) {
+				// Second click on a valid move - move the piece
+				chessBoard.movePiece(toBBSquare(selectedRow, selectedCol), toBBSquare(row, col));	      
+				resetSelection();
+				updateBoard();
+				// Notify the observer (GUI) that a human move is made
+				update(null, null);
+				selectingMode = true;
+			} else {
+				// Second click on a different square - show valid moves for that square
+				showValidMoves(currentValidMoves);
+				selectedRow = row;
+				selectedCol = col;
+				selectingMode = false;
+			}
 			// Second click - move the piece
 		}
 	}
 
 	/**
-     * Displays the valid moves on the chessboard panels with different colors.
-     *
-     * @param validMovesBitboard The bitboard representing valid moves.
-     */
+	 * Displays the valid moves on the chessboard panels with different colors.
+	 *
+	 * @param validMovesBitboard The bitboard representing valid moves.
+	 */
 	private void showValidMoves(long validMovesBitboard) {
 		SwingUtilities.invokeLater(() -> {
 			for (int rank = 7; rank >= 0; rank--) {
@@ -222,16 +229,16 @@ public class GUI extends JFrame {
 	}
 
 	/**
-     * Resets the selection of a chessboard panel.
-     */
+	 * Resets the selection of a chessboard panel.
+	 */
 	private void resetSelection() {
 		selectedRow = -1;
 		selectedCol = -1;
 	}
 
 	/**
-     * Updates the graphical representation of the chessboard.
-     */
+	 * Updates the graphical representation of the chessboard.
+	 */
 	public void updateBoard() {
 		PieceI[] boardArray = chessBoard.square;
 
@@ -242,11 +249,11 @@ public class GUI extends JFrame {
 			for (int col = 0; col < cols; col++) {
 				int index = row * cols + col;
 				PieceI piece = boardArray[index];
-				
+
 				String pieceSymbol = (piece != null) ? pieceStrings[piece.getPieceType() -1] : " ";
 				int stringColour = (piece != null) ? piece.getPieceColour() : 2;
 				JLabel label = new JLabel(pieceSymbol, SwingConstants.CENTER);
-				
+
 				if (stringColour != 2) {
 					if (stringColour == 0) {
 						label.setForeground(Color.WHITE);
@@ -257,31 +264,34 @@ public class GUI extends JFrame {
 					label.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				panels[row][col].removeAll(); // Clear the panel
-				
+
 				panels[row][col].add(label, BorderLayout.CENTER); // Add label to center
 				panels[row][col].revalidate(); // Revalidate the panel
-				
-				
+
+
 			}
 		}
 		updateSidePanel();
-		
+
 	}
-	
+
 	/**
-     * Updates the side panel with information about moves calculated,
-     * current evaluation, and the best move.
-     */
+	 * Updates the side panel with information about moves calculated,
+	 * current evaluation, and the best move.
+	 */
 	private void updateSidePanel() {
 		Component[] components = sidePanel.getComponents();
 		Searcher searcher = new Searcher();
 		searcher.calcBestMove(chessBoard, depth);
 		
+		BotSetting.setNextFrom(searcher.bestMoveSoFar.getFrom());
+		BotSetting.setNextTo(searcher.bestMoveSoFar.getTo());
+
 		if (components[3] instanceof JLabel) {
 			JLabel label = (JLabel) components[3];
 			label.setText("Moves calculated: " + searcher.movesCalculated);
 		}
-		
+
 		if (components[4] instanceof JLabel) {
 			JLabel label = (JLabel) components[4];
 			label.setText("Current Eval: " + searcher.bestEvalSoFar);			
@@ -290,12 +300,12 @@ public class GUI extends JFrame {
 			JLabel label = (JLabel) components[5];
 			label.setText("Current BestMove: " + Board.translateBBToSquare(searcher.bestMoveSoFar.getFrom()) + " " + Board.translateBBToSquare(searcher.bestMoveSoFar.getTo()));
 		}
-		
-        // Repaint the sidePanel to reflect changes
-        sidePanel.revalidate();
-        sidePanel.repaint();
-        
-        chessBoard.printBoard(chessBoard.square);
+
+		// Repaint the sidePanel to reflect changes
+		sidePanel.revalidate();
+		sidePanel.repaint();
+
+		chessBoard.printBoard(chessBoard.square);
 	}
 
 	private Color getSquareColor(int rank, int file) {
@@ -307,14 +317,14 @@ public class GUI extends JFrame {
 	}
 
 	// ### Helper
-	
+
 	/**
-     * Represents the inverse mapping of the row index from the chessboard
-     * to the corresponding row index in the bitboard representation.
-     *
-     * @param row The row index from the chessboard.
-     * @return The corresponding row index in the bitboard representation.
-     */
+	 * Represents the inverse mapping of the row index from the chessboard
+	 * to the corresponding row index in the bitboard representation.
+	 *
+	 * @param row The row index from the chessboard.
+	 * @return The corresponding row index in the bitboard representation.
+	 */
 	private static int inverseRowAndCol(int row) {
 		int bbRow = 0;
 		switch (row) {
@@ -347,14 +357,47 @@ public class GUI extends JFrame {
 	}
 
 	/**
-     * Converts row and column indices to the bitboard position.
-     *
-     * @param row The row index of the chessboard.
-     * @param col The column index of the chessboard.
-     * @return The bitboard position corresponding to the row and column indices.
-     */
+	 * Converts row and column indices to the bitboard position.
+	 *
+	 * @param row The row index of the chessboard.
+	 * @param col The column index of the chessboard.
+	 * @return The bitboard position corresponding to the row and column indices.
+	 */
 	private static int toBBSquare(int row, int col) {
 		int bbPos = inverseRowAndCol(row) * 8 + col;
 		return bbPos;
+	}
+
+
+
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("CP1");
+
+		boolean isWhite = chessBoard.gameStateStack.peek().getIsWhiteToMove();
+
+		System.out.println(isWhite);
+
+		// Introduce a delay before making the bot move
+        Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                makeBotMove(isWhite);
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+
+	}
+
+	@Override
+	public void makeBotMove(boolean isWhite) {
+
+		
+		chessBoard.movePiece(BotSetting.getNextFrom(), BotSetting.getNextTo());
+		updateBoard();
+		update(null, null);
+		System.out.println("made move");
+
 	}
 }
