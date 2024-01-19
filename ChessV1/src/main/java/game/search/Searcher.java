@@ -142,7 +142,6 @@ public class Searcher {
 		//Limit quiescence search depth artificially
 		counter = counter + 1;
 		if (counter == quiescenceDepth + 1) {
-			System.out.println("        quiescence depth limiter");
 			return beta;
 		}
 
@@ -202,12 +201,17 @@ public class Searcher {
 			}
 
 
+			if (showDebugInfo) {
+				System.out.println("            capture Move: " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo()) + "                alpha: " + alpha + ",    beta: " + beta + ",      eval: " + evaluation);
 
-			System.out.println("            capture Move: " + Board.translateBBToSquare(capture.getFrom()) + " - " + Board.translateBBToSquare(capture.getTo()) + "                alpha: " + alpha + ",    beta: " + beta + ",      eval: " + evaluation);
-
+			}
+		
 
 		}
-		System.out.println("");
+		if (showDebugInfo) {
+			System.out.println("");
+		}
+	
 
 		return alpha;
 	}

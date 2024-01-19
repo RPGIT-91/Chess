@@ -1,6 +1,5 @@
 package game.movegeneration.pieces;
 
-import game.board.Board;
 import game.board.GameState;
 import game.movegeneration.BitBoards;
 
@@ -113,8 +112,6 @@ public class King implements PieceI {
 			
 
 			if((freeSquare & BitBoards.allBB) != 0 || ((moveSquare & attackMask) != 0)) {
-				System.out.println("KS not possible");
-				
 				castleBoard &= ~((1L << 6) | (1L <<  62));
 			}
 
@@ -123,22 +120,9 @@ public class King implements PieceI {
 			freeSquare = (moveSquare | (kingPiece >> 3)) &~ kingPiece;
 			
 			
-			//if blocked or attacked remove
-			System.out.println("freeSquare");
-			Board.printBitBoard(freeSquare, false);
-			
-			System.out.println("moveSquare");
-			Board.printBitBoard(moveSquare, false);
-			
-			System.out.println("allBB");
-			Board.printBitBoard(BitBoards.allBB, false);
-
 			if((freeSquare & BitBoards.allBB) != 0 || ((moveSquare & attackMask) != 0)) {
 				castleBoard &= ~((1L << 2) | (1L <<  58));
 			}
-			
-			System.out.println("castleBoard");
-			Board.printBitBoard(castleBoard, false);
 			possibleMoves |= castleBoard;
 		}
 		return possibleMoves;
