@@ -233,8 +233,8 @@ public class GUI extends JFrame implements GameObserver{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				botSettings.setBlackBotEnabled(!botSettings.isBlackBotEnabled());
-				String BotLabelWhite = (botSettings.isBlackBotEnabled()) ? "On" : "Off";
-				label4.setText("Bot White: " + BotLabelWhite);
+				String BotLabelBlack = (botSettings.isBlackBotEnabled()) ? "On" : "Off";
+				label5.setText("Bot Black: " + BotLabelBlack);
 			}
 		});
 
