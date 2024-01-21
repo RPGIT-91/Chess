@@ -107,15 +107,20 @@ public class GUI extends JFrame implements GameObserver{
 
 		// Add your buttons and displays to sidePanel
 		// For example:
-
+		String BotLabelWhite = (botSettings.isWhiteBotEnabled()) ? "On" : "Off";
+		String BotLabelBlack = (botSettings.isBlackBotEnabled()) ? "On" : "Off";
 
 		JButton button1 = new JButton("Save Game");
 		JButton button2 = new JButton("Load Game");
 		JButton button3 = new JButton("New Game");
+		JButton button4 = new JButton("Toggle Bot White");
+		JButton button5 = new JButton("Toggle Bot Black");
 
 		JLabel label1 = new JLabel("Moves calculated: ");
 		JLabel label2 = new JLabel("Current Eval: ");
 		JLabel label3 = new JLabel("Current BestMove: ");
+		JLabel label4 = new JLabel("Bot White: "+ BotLabelWhite);
+		JLabel label5 = new JLabel("Bot Black: "+ BotLabelBlack);
 
 		label1.setFont(new Font("Serif", Font.PLAIN, 12));
 		label2.setFont(new Font("Serif", Font.PLAIN, 12));
@@ -138,9 +143,9 @@ public class GUI extends JFrame implements GameObserver{
 					// Set the initial directory to be within your project
 					String projectPath = System.getProperty("user.dir");
 					String initialFolderPath = projectPath + File.separator + "SavedGames";
-			        fileChooser.setCurrentDirectory(new File(initialFolderPath));
-			        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
-			        fileChooser.setFileFilter(filter);
+					fileChooser.setCurrentDirectory(new File(initialFolderPath));
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
+					fileChooser.setFileFilter(filter);
 
 					int userSelection = fileChooser.showSaveDialog(null);
 
@@ -148,9 +153,9 @@ public class GUI extends JFrame implements GameObserver{
 						File fileToSave = fileChooser.getSelectedFile();
 
 						// Ensure the file has the .txt extension
-		                if (!fileToSave.getName().toLowerCase().endsWith(".txt")) {
-		                    fileToSave = new File(fileToSave.getParentFile(), fileToSave.getName() + ".txt");
-		                }
+						if (!fileToSave.getName().toLowerCase().endsWith(".txt")) {
+							fileToSave = new File(fileToSave.getParentFile(), fileToSave.getName() + ".txt");
+						}
 						// Write the serialized Board object to the selected file
 						try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
 							String fenValue = chessBoard.fenStack.peek();
@@ -181,11 +186,11 @@ public class GUI extends JFrame implements GameObserver{
 					// Set the initial directory to be within your project
 					String projectPath = System.getProperty("user.dir");
 					String initialFolderPath = projectPath + File.separator + "SavedGames";
-			        fileChooser.setCurrentDirectory(new File(initialFolderPath));
-			        
-			        // Restrict file types to .txt
-			        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
-			        fileChooser.setFileFilter(filter);
+					fileChooser.setCurrentDirectory(new File(initialFolderPath));
+
+					// Restrict file types to .txt
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
+					fileChooser.setFileFilter(filter);
 					int userSelection = fileChooser.showOpenDialog(null);
 
 					if (userSelection == JFileChooser.APPROVE_OPTION) {
@@ -214,6 +219,24 @@ public class GUI extends JFrame implements GameObserver{
 				updateBoard();
 			}
 		});
+		
+		button4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				botSettings.setWhiteBotEnabled(!botSettings.isWhiteBotEnabled());
+				String BotLabelWhite = (botSettings.isWhiteBotEnabled()) ? "On" : "Off";
+				label4.setText("Bot White: " + BotLabelWhite);
+			}
+		});
+		
+		button5.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				botSettings.setBlackBotEnabled(!botSettings.isBlackBotEnabled());
+				String BotLabelWhite = (botSettings.isBlackBotEnabled()) ? "On" : "Off";
+				label4.setText("Bot White: " + BotLabelWhite);
+			}
+		});
 
 		sidePanel.add(button1);
 		sidePanel.add(button2);
@@ -221,6 +244,12 @@ public class GUI extends JFrame implements GameObserver{
 		sidePanel.add(label1);
 		sidePanel.add(label2);
 		sidePanel.add(label3);
+		
+		sidePanel.add(button4);
+		sidePanel.add(label4);
+		
+		sidePanel.add(button5);
+		sidePanel.add(label5);
 
 		// Add chessboardPanel to the center and sidePanel to the east
 		add(chessboardPanel, BorderLayout.CENTER);
@@ -231,7 +260,6 @@ public class GUI extends JFrame implements GameObserver{
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-
 
 
 	/**
@@ -465,9 +493,9 @@ public class GUI extends JFrame implements GameObserver{
 
 	@Override
 	public void makeBotMove() {
-		
+
 		boolean isWhite = chessBoard.gameStateStack.peek().getIsWhiteToMove();
-		
+
 		if (isWhite & botSettings.isWhiteBotEnabled() || !isWhite & botSettings.isBlackBotEnabled()) {
 			chessBoard.movePiece(BotSetting.getNextFrom(), BotSetting.getNextTo());
 			updateBoard();
@@ -475,7 +503,7 @@ public class GUI extends JFrame implements GameObserver{
 		} else {
 			System.out.println("Bot is not set to move");
 		}
-		
+
 
 	}
 }

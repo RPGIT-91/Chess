@@ -38,9 +38,6 @@ public class Main{
 		Board board = new Board();
 		BotSetting botSettings = new BotSetting();
 		
-		botSettings.setBlackBotEnabled(true);
-		botSettings.setWhiteBotEnabled(false);
-		
 		//board.loadFENBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ");
 		
 		//board.loadFENBoard("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1 ");
