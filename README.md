@@ -1,4 +1,5 @@
 # Introduction
+The ReadMe is not up to date. Method explanations can be found within the javadoc.
 The following Programn is a Chess Game with move validation
 Move generation and validation is done with set wise bitboards for each piece Type and colour.
 
